@@ -1,0 +1,75 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 5px;
+}
+
+tr:nth-child(2n) {
+  background-color: lightblue;
+}
+
+thead tr {
+  font-weight: bold;
+}
+
+.quote::before {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.quote.positive {
+  text-decoration: overline;
+}
+
+.quote.positive::before {
+  content: "▲";
+}
+
+.quote.negative {
+  text-decoration: underline;
+}
+
+.quote.negative::before {
+  content: "▼";
+}
+
+header, footer, thead tr {
+  background-color: blue;
+  color: white;
+}
+
+header, footer {
+  text-align: center;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1.9rem;
+    line-height: 1.9rem;
+}
+
+main {
+    margin-bottom: 2rem;
+}
+
+form {
+  padding: 10px;
+}

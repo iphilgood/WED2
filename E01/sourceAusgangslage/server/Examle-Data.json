@@ -1,0 +1,37 @@
+{
+  "aktienkurse": [ /*Array mit allen Firmen mit deren Verlauf*/
+    {
+      "firma": "Alphabet Inc. (C)",  /*Name der Firma*/
+      "verlauf": [ /*Verlauf per Monat*/
+        {
+          "datum": "2015-12-31T23:00:00.000Z",  /*Datum vom Kurs */
+          "aktueller-kurs": 1335, /*Aktionkurs in Franken*/
+          "unterschied": 0.5,   /*Differenz zum letzten Monat*/
+          "gestiegen": true /*true falls Kurs gestiegen ist*/
+        },
+        {
+          "datum": "2016-01-31T23:00:00.000Z",
+          "aktueller-kurs": 934.5,
+          "unterschied": -0.3,
+          "gestiegen": false
+        },
+        {
+          "datum": "2016-02-29T23:00:00.000Z",
+          "aktueller-kurs": 1401.75,
+          "unterschied": 0.5,
+          "gestiegen": true
+        }
+      ]
+    },
+    {
+      "firma": "Microsoft Corp.",
+      "verlauf": [/*wie oben - mit anderen Zahlen*/]
+    }
+    /*Noch weitere Firmen*/
+  ],
+  "datums-bereich": [ /*Hilfs-Array - Beinhaltet die angefragten Monate*/
+    "2015-12-31T23:00:00.000Z",
+    "2016-01-31T23:00:00.000Z",
+    "2016-02-29T23:00:00.000Z"
+  ]
+}
