@@ -1,0 +1,16 @@
+{
+  "name": "e01",
+  "version": "1.0.0",
+  "description": "WED2 E01",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Phil Schilter",
+  "license": "WTFPL",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  }
+}
