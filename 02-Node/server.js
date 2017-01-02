@@ -1,6 +1,7 @@
 const http = require('http');
 const url = require('url');
 const fs = require('fs');
+const LoopFromTo = require('./loopFromTo.js')
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -14,11 +15,7 @@ function handleNumbers(req, res) {
 
   res.writeHeader(200, { "Content-Type": "text/html" });
 
-  (function doLoopTo(i, to) {
-    i = (typeof(i) === 'undefined' ?  from : i);
-    res.write(String(i++) + " ");
-    i > to || doLoopTo(i, to);
-  })(from, to);
+  LoopFromTo.loop(res, from, to);
 
   res.end();
 }
