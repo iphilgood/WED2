@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>FlexBoxSwingBoxLayout</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      width: 80%;
+      margin: 10px auto;
+    }
+
+    #btn1,
+    #btn2,
+    #btn3 {
+      flex-basis: 100px;
+    }
+
+    #btn3 {
+      margin-left: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <input type="submit" id="btn1" />
+    <input type="submit" id="btn2" />
+    <input type="submit" id="btn3" />
+  </div>
+</body>
+
+</html>

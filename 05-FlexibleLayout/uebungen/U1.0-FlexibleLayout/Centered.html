@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Centered</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      width: 80%;
+      margin: 10px auto;
+      justify-content: space-between;
+    }
+
+    .btn {
+      flex-basis: 100px;
+    }
+
+    .centered {
+      background-color: cyan;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <input class="btn" type="submit" value="SCHICKEN" />
+    <span class="centered">CENTERED</span>
+    <input class="btn" type="submit" value="SCHICKEN" />
+  </div>
+</body>
+
+</html>

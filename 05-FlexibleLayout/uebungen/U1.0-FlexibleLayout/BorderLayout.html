@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>BorderLayout</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header,
+    .footer {
+      height: 50px;
+    }
+
+    .header {
+      background-color: palevioletred;
+    }
+
+    .footer {
+      background-color: palevioletred;
+    }
+
+    .aside,
+    .main {
+      flex: 0 0 12rem;
+    }
+
+    .aside {
+      background-color: palegoldenrod;
+    }
+
+    .main {
+      background-color: paleturquoise;
+      flex-grow: 1;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    .container__inner {
+      display: flex;
+      flex: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">HEADER</header>
+    <div class="container__inner">
+      <aside class="aside aside--left">ASIDE LEFT</aside>
+      <main class="main"></p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum totam, architecto nemo magni quaerat aliquam illum optio adipisci dolores repellat tempore quis consequatur eaque blanditiis quibusdam, excepturi aspernatur quidem voluptatem.</p></main>
+      <aside class="aside aside--right">ASIDE RIGHT</aside>
+    </div>
+    <footer class="footer">FOOTER</footer>
+  </div>
+</body>
+
+</html>
