@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+		*{
+			box-sizing: border-box;
+			padding: 0px;
+			margin: 0px;
+		}
+		#containerMain{
+			display: flex;
+			flex-flow: column;
+			height: 100%;
+		}
+        #container{
+            display: flex;
+            flex-flow: row;
+			padding: 0px;
+        }
+
+        div{
+            flex: 1;
+            border: 1px solid blue;
+			min-height: 0px;  /*firefox bug*/
+        }
+        
+        .content{
+            flex : 3 1 50%;
+			overflow-y: scroll;
+
+        }
+
+		.aside{
+            flex: 0 0 auto;
+        }
+		.header, .footer {
+			flex: 0 0 auto;
+		}
+
+		#root{
+			height: 100vh;
+		}
+
+
+    </style>
+</head>
+<body>
+	<div id="root">
+		<div id="containerMain">
+			<div class="header">header</div>
+			<div id="container">
+				<div class="aside">aside 1</div>
+				<div class="content">Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+					Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+					Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+				</div>
+				<div class="aside">aside 2</div>
+			</div>
+			<div class="footer">footer</div>
+		</div>
+	 </div>
+</body>
+</html>

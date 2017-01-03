@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>WED2 Übung Woche 05 Flexible Layout </title>
+
+	<link rel="stylesheet" type="text/css" href="../../resources/documentStyle.css">
+	<script src="../../resources/solutions.js"></script>
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		WED2 Übung Woche 05 Flexible Layout
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+	<h2>Theorie</h2>
+	<h3>Box Model, Inline Block</h3>
+	<p>Gehen Sie die in der Vorlesung gezeigten Beispiele (Demos) im Folder width-height-position durch
+	Beantworten Sie dabei die folgenden Fragen zu den Files. Nutzen sie die passenden Folien
+	um die Fragen zu beantworten.
+	<ul>
+		<li>01-BoxSizing-BorderVsContent - Mit Padding 10px, welche Box ist grösser eine 70x70 Box mit Box-Sizing=Content-Box oder Border-Box?;
+		    <span class="solution">Content Box: Padding kommt hinzu</span>
+		    Die gleiche Frage für 2 Boxen mit padding=0 und border=0 <span class="solution">Beide sind gleich gross</span></li>
+		<li>02-BoxSizing-FixedHeight+Overflow - Berechnen Sie: Wie hoch (px) ist der graue Bereich?
+			<span class="solution">100px: Der graue Bereich ist content+padding; content+padding+border=200px; border=2*50</span>
+			Wie erreicht man, dass gesamte Text im grauen Bereich dargestellt werden kann?
+			<span class="solution">bei .box die fixe Höhe (height) entfernen</span>
+			Wie erreicht man, dass der Text nicht über die Rand der Box mit fester Höhe hinausragt?
+			<span class="solution">.box overflow hidden oder scroll setzen.
+			Schauen Sie auch was passiert wenn Sie overflow: hidden auf dem Container setzen
+			und dann zusätzlich noch die Margin von box auf -25px setzen </span></li>
+		<li>04-BoxSizing-FixedMarginForScrollBar-AktienkurseStatic -
+			Was passiert wenn Sie beim main die margin-bottom auf 8rem setzen?
+			<span class="solution">Es ist möglich mehr "white space" am Ende der Liste
+			in den View zu scrollen</span>
+			Was passiert wenn Sie beim main die margin-bottom auf 0 setzen?
+			<span class="solution">Die untere Zeile der Tabelle lässt sich nicht hinter
+			dem Footer hervorscrollen</span></li>
+		<li>05-BoxSizing-FlexibleLayout-AbsolutePosition+ComputedValues+Overflow -
+			Adaptieren Sie das Layout so, dass immer der gesamte Text in der Box in der
+			Mitte dargestellt wird (d.h. die Box wird höher wenn das Fenster schmaler wird)
+			Achtung. Diese Aufgabe erfordert einen signifikanten Umbau. Dies ist nicht
+			möglich mit nur Boxen die absolut positioniert werden.
+			<span class="solution">Eine Lösung ist box5 und box 3 im Fluss zu lassen
+			box mit top-margin 100px und left-margin: 100px; Box1, Box2 und Box4 können
+			weiterhin absolut positioniert werden. Sie können sich bei der Lösung
+			durch 07-BoxSizing-Combining-Inline+Absolute (und 07b-BoxSizing-Combining-Block+Absolute)
+			inspirieren lassen</span></li>
+		<li>06-BoxSizing-WidthDemo-Relative+AbsolutePosition+ComputedWidth -
+			Verschieben Sie das HTML von box11. Beobachten und erklären Sie was passiert
+			<span class="solution">Box11 nimmt ihre Position relativ zum neuen Parent ein</span></li>
+	</ul>
+	<h3>FlexBox</h3>
+	<p>Lesen Sie den Artikel <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank">
+	https://css-tricks.com/snippets/css/a-guide-to-flexbox/</a>. oder
+	<a href="https://scotch.io/tutorials/a-visual-guide-to-css3-flexbox-properties" target="_blank">
+	https://scotch.io/tutorials/a-visual-guide-to-css3-flexbox-properties </a></p>
+	<p>Experimentieren Sie parallel dazu <a href="https://codepen.io/enxaneta/pen/adLPwv" target="_blank"> https://codepen.io/enxaneta/pen/adLPwv</a> .</p>
+
+
+	<h2>Frosch platzieren.</h2>
+	<p>Lösen Sie die folgenden CSS Layout Aufgaben zur Platzierung des Frosches:
+	<a href="http://flexboxfroggy.com/" target="_blank">http://flexboxfroggy.com/</a></p>
+	<p>Danach sind Sie parat Flexbox Defense (Tower-Defense mit FlexBox Positionierung
+	zu spielen:
+	<a href="http://www.flexboxdefense.com/">http://www.flexboxdefense.com/</a>
+
+	<h2>Layout erstellen.</h2>
+	<p>Versuchen Sie mit FlexBox folgende Layouts nachzubauen:</p>
+	<ol>
+		<li>Gewisse Button links und andere Rechts bündig z.B.:<br>
+			<img src="BoxLayout.png" style="border: 2px solid blue;">
+			<div class="solution">
+			<a href="LoesungFlexBoxSwingBoxLayout.html">LoesungFlexBoxSwingBoxLayout.html</a>
+		</div></li>
+		<li>Text soll zentriert sein z.B.:<br><img src="Centered.png" style="border: 2px solid blue;">
+			<div class="solution">
+			<a href="LoesungCentered.html">LoesungCentered.html</a>
+		</div></li>
+		<li>"Holy Grail Layout":<br><img src="Borderlayout2.png"><div class="solution">
+			<a href="LoesungBorderlayout.html">LoesungBorderlayout.html</a>
+		</div></li>
+	</ol>
+</body>
+</html>
