@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+		*{
+		    box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}		
+        #container{
+            display: flex;
+            flex-flow: row;    
+			margin: 10px;
+            justify-content: space-between;
+        }
+        #a, #c{
+            flex-basis: 100px;
+        }
+        #b{        
+            flex: 0 0 auto;
+        }
+
+        @media (max-width: 320px)
+        {
+            body{
+                height: 100vh;
+            }
+            #container{
+                flex-flow: column;
+                margin: 0px;
+                height: 100%;
+            }
+
+            #b{
+                align-self: center;
+            }
+
+            #a, #c{
+                flex-basis: auto;
+            }
+        }
+		 
+    </style>
+</head>
+<body>
+	<div id="container">	
+		<input  type="submit" id="a"/>
+		<div id="b">CENTER</div>
+		<input type="submit" id="c"/>
+	</div>		 
+</body>
+</html>

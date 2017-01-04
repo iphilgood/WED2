@@ -1,0 +1,12 @@
+@charset "utf-8";
+
+@mixin addSymbol($position : before, $symbol: "<"){
+  &:#{$position}{
+      content: $symbol;
+  }
+}
+
+.symbol{
+   @include addSymbol(after, "?");
+   @include addSymbol(before, "¿");
+ }

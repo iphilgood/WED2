@@ -1,0 +1,11 @@
+@import "arrow";
+
+$size : 50px;
+@each $pos in $positions {
+
+  .arrow-#{$pos} {
+    @include createArrow(  rgb(255,0,0), rgb(0,255,0), $size, $pos);
+    margin-top: $size + 10px;
+    margin-left: $size + 10px;
+  }
+}

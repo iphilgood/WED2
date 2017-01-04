@@ -1,0 +1,107 @@
+.arrow-left {
+  margin-top: 60px;
+  margin-left: 60px; }
+  .arrow-left {
+    position: relative;
+    background: red;
+    border: 4px solid lime; }
+  .arrow-left:after, .arrow-left:before {
+    right: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none; }
+  .arrow-left:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-right-color: red;
+    border-width: 50px;
+    margin-top: -50px; }
+  .arrow-left:before {
+    border-color: rgba(194, 225, 245, 0);
+    border-right-color: lime;
+    border-width: 56px;
+    margin-top: -56px; }
+
+.arrow-right {
+  margin-top: 60px;
+  margin-left: 60px; }
+  .arrow-right {
+    position: relative;
+    background: red;
+    border: 4px solid lime; }
+  .arrow-right:after, .arrow-right:before {
+    left: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none; }
+  .arrow-right:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-left-color: red;
+    border-width: 50px;
+    margin-top: -50px; }
+  .arrow-right:before {
+    border-color: rgba(194, 225, 245, 0);
+    border-left-color: lime;
+    border-width: 56px;
+    margin-top: -56px; }
+
+.arrow-top {
+  margin-top: 60px;
+  margin-left: 60px; }
+  .arrow-top {
+    position: relative;
+    background: red;
+    border: 4px solid lime; }
+  .arrow-top:after, .arrow-top:before {
+    bottom: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none; }
+  .arrow-top:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-bottom-color: red;
+    border-width: 50px;
+    margin-left: -50px; }
+  .arrow-top:before {
+    border-color: rgba(194, 225, 245, 0);
+    border-bottom-color: lime;
+    border-width: 56px;
+    margin-left: -56px; }
+
+.arrow-bottom {
+  margin-top: 60px;
+  margin-left: 60px; }
+  .arrow-bottom {
+    position: relative;
+    background: red;
+    border: 4px solid lime; }
+  .arrow-bottom:after, .arrow-bottom:before {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none; }
+  .arrow-bottom:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-top-color: red;
+    border-width: 50px;
+    margin-left: -50px; }
+  .arrow-bottom:before {
+    border-color: rgba(194, 225, 245, 0);
+    border-top-color: lime;
+    border-width: 56px;
+    margin-left: -56px; }

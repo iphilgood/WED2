@@ -1,0 +1,10 @@
+$color: rgb(255, 60, 80);
+$colorComplement: complement($color);
+$defaultFontSize: 1rem;
+$articleFont: $defaultFontSize * 1.5;
+
+article {
+  color: $color;
+  background: $colorComplement;
+  font: $articleFont;
+}

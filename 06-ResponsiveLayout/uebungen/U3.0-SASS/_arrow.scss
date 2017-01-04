@@ -1,0 +1,52 @@
+$positions: left, right, top , bottom;
+$mapInversePosition : (top : bottom, right : left, bottom : top,left : right);
+
+@function inversePos($position){
+  @return map-get($mapInversePosition, $position);
+}
+
+@function combine($position){
+  @if $position == top or $position == bottom {
+    @return left;
+  }
+  @else{
+    @return top;
+  }
+}
+
+@mixin createArrow($color: rgb(255,0,0), $borderColor: rgb(0,255,0), $size : 50px, $position : left) {
+  $inverse : inversePos($position);
+  $combine : combine($position);
+
+  &{
+    position: relative;
+    background: $color;
+    border: 4px solid $borderColor;
+  }
+  &:after, &:before{
+    #{$inverse}: 100%;
+    #{$combine}: 50%;
+
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  &:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-#{$inverse}-color: $color;
+    border-width: $size;
+    margin-#{$combine}: $size * -1;
+  }
+  &:before {
+    border-color: rgba(194, 225, 245, 0);
+    border-#{$inverse}-color: $borderColor;
+    border-width: $size+6px;
+    margin-#{$combine}: ($size+6px) * -1;
+  }
+}
+
+

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>WED2 Übung: Media Queries</title>
+
+	<link rel="stylesheet" type="text/css" href="../../resources/documentStyle.css">
+	<script src="../../resources/solutions.js"></script>
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		WED2 Übung: Media Queries
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+
+
+	<h2>Theorie</h2>
+	<p>Weitere Informationen: <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries" target="_blank">https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries/</a>.</p>
+
+	<h2>Aufgabenbeschreibung</h2>
+	<p class="description">Lösen Sie folgende Aufgaben.</p>
+ 
+
+	<h2>Media Queries anwenden.</h2>
+	<p>Nutzen Sie ihr Layout aus U1.0.</p>
+	<img src="Centered.png" style="border: 2px solid blue;">
+	<p>Dieses Layout soll für Smartphones wie folgt aussehen. Nutzen Sie dafür Media-Queries:</p>
+	<img src="CenteredLoesung.png" style="border: 2px solid blue">
+	<div class="solution">
+		<a href="LoesungCentered.html">LoesungCentered.html</a>
+	</div>
+
+
+	<p><b>Ist Ihre Lösung / bzw. die Muster Lösung Mobile First? Begründen Sie.</b></p>
+	<div class="solution">
+		Nein - Begründung: Erst durch die Media Queries wird die Mobile Ansicht sichtbar. Dies wiederspricht Mobile First - Es könnte sein, das Media Queries nicht unterstützt werden wiederspricht dem "Progressive Enhancement"-Prinzip.
+	</div>
+
+	<h2>Media Queries</h2>
+	<p>Öffnen Sie folgendes HTML: <a href="MediaQueriesViewPort.html">MediaQueriesViewPort.html</a></p>
+	<p>Beantworten Sie folgende Fragen:</p>
+
+	<ol>
+		<li>Welcher Farbe erhält 'A' falls die Grösse des Viewports auf 200px gesetzt wird.
+			<br>Viewport kann im Chrome wie folgt geändert werden - Debug Tools müssen geöffnet sein und rechts angedockt sein:
+			<br><img src="ViewportSize.png" style="border: 2px solid blue;">
+
+			<div class="solution">
+				Blau. Grund: Das zweite Media-Querie überschreibt das vorhergehende.
+		</div></li>
+		<li>Zoomen Sie auf den Faktor: 0.5. Weshalb hat sich die Farbe vom "A" verändert?<div class="solution">
+			Bei Desktop Geräten verändert sich beim Zoomen das Verhältnis zwischen Device Pixeln und CSS-Pixeln. Aus den 200 Device Pixeln werden 400 CSS Pixeln. Daraus folgt: Die Regel trifft nicht mehr zu.
+		</div></li>
+		<li>Zoomen Sie auf den Faktor 2.0. Wieviele Device Pixel muss der Viewport besitzen damit der Buchstabe "B" Grün wird. Begründen Sie den Wert.<div class="solution">
+			1000. Grund: Durch den Faktor werden 2 Device Pixel auf 1 CSS Pixel gemappt. Damit sind 1000 Device Pixel notwendig um 500 CSS Pixel zu erhalten.
+		</div></li>
+	</ol>
+</body>
+</html>

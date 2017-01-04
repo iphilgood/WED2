@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>WED2 Übung: Sass</title>
+
+	<link rel="stylesheet" type="text/css" href="../../resources/documentStyle.css">
+	<script src="../../resources/solutions.js"></script>
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		WED2 Übung: Sass
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+
+
+	<h2>Theorie</h2>
+	<p>Weitere Informationen: <a href="http://sass-lang.com/guide" target="_blank">http://sass-lang.com/guide</a>.</p>
+
+	<h2>Sass installieren</h2>
+	<p>Installieren Sie Sass. Entscheiden Sie sich für eine Variante</p>
+	<ul>
+		<li><a href="https://www.jetbrains.com/webstorm/help/transpiling-sass-less-and-scss-to-css.html#d207212e166">WebStorm & Ruby</a></li>
+		<li><a href="https://www.npmjs.com/package/node-sass">node-sass</a></li>
+		<li><a href="https://github.com/dlmanning/gulp-sass">gulp-sass</a></li>
+	</ul>
+	<p>Überprüfen Sie ihre Installation in dem Sie ein scss File anlegen und dieses übersetzen lassen.</p>
+	<ul>
+		<li>WebStorm & Ruby: Sollte durch den File-Watcher automatisch passieren.</li>
+		<li><a href="https://github.com/sass/node-sass#command-line-interface">node-sass: Command-Line</a></li>
+		<li>gulp-sass: "gulp sass:watch" übersetzt alles im Ordner sass.</li>
+	</ul>
+
+	<h2>Sass Variablen</h2>
+	<p>Der article-tag sollte wie folgt gestyled werden mit Sass - nutzen Sie Sass Variablen und Sass Build-In-Funktionen:</p>
+	<ul>
+		<li>Schriftfarbe: RGB Werte: 255,60,80.</li>
+		<li>Hintergrund: Komplementär Farbe von der Schrift.</li>
+		<li>Schriftgrösse sollte 50% grösser sein, als die Standardschriftfarbe.</li>
+	</ul>
+	<p>Das generierte CSS sollte wie folgt aussehen:</p>
+	<code>
+		<pre class="prettyprint">
+article {
+  color: #ff3c50;
+  background: #3cffeb;
+  font: 1.5rem;
+}</pre>
+	</code>
+
+
+	<div class="solution">
+		<a href="loesungVariable.scss">loesungVariable.scss</a>
+	</div>
+
+	<h2>Sass Mixing 1</h2>
+	<p>Sie sollen ein mixing erstellen welche die Spanische-Fragezeichen ergänzt: ¿adónde vas? </p>
+	<p>Das Mixing sollte wie folgt genutzt werden können:</p>
+	<code>
+		<pre class="prettyprint">
+.symbol{
+   @include addSymbol(after, "?");
+   @include addSymbol(before, "¿");
+}</pre>
+	</code>
+	<p>Das resultierten CSS könnte wie folgt aussehen:</p>
+	<code>
+		<pre class="prettyprint">
+@charset "UTF-8";
+.symbol:after {
+  content: "?";
+}
+.symbol:before {
+  content: "¿";
+}</pre>
+	</code>
+	<div class="solution">
+		<p><a href="loesungAdd.scss">loesungAdd.scss</a></p>
+	</div>
+
+	<h2>Sass Mixing 2</h2>
+	<p>Auf <a href="http://cssarrowplease.com/" target="_blank">http://cssarrowplease.com/</a> kann man CSS-Arrows erstellen.</p>
+	<ul>
+		<li>Analysieren Sie die Änderungen je nach Richtung.</li>
+		<li>Erstellen Sie ein Sass Mixing, welches das gleiche Erreicht.</li>
+		<li>Das Mixing soll ein Partial sein.</li>
+		<li>Erstellen Sie ein SCSS File welches das Partial verwendet um 4 CSS Klassen zu generieren: .arrow-left .arrow-right .arrow-top und .arrow-bottom</li>
+		<li>Vermeiden Sie copy & paste.</li>
+		<li>Testen Sie ihr Lösung in einem HTML.</li>
+		<li>Vergleichen Sie Ihre Lösung mit der Musterlösung.</li>
+	</ul>
+	<div class="solution">
+		<p>Eine Mögliche Lösung: <a href="styles.scss">styles.scss</a> und  <a href="_arrow.scss">_arrow.scss</a></p>
+	</div>
+	<p>Würde es Sinn machen Ihre Lösung mit Sass Vererbung zu erstellen?</p>
+	<div class="solution">
+		<p>Nein, da Parameter benutzt werden - dies ist mit Vererbung nicht möglich.</p>
+	</div>
+
+	<h2>Sass Fragen</h2>
+	<ul>
+		<li>WebStorm: Testen Sie ob ein Rename von einer Sass Funktion funktioniert. Werden alle Referenzen aktualisiert?</li>
+		<li>Was passiert wenn eine Funktion / Variable nicht definiert ist?</li>
+		<li>Was passiert wenn man zuwenig / zuviele Parameter einer Funktion übergibt?</li>
+		<li>Was passiert wenn man einen falschen Typ mitgibt?</li>
+	</ul>
+	<p>Validieren Sie ihre Lösung mit Sass.</p>
+</body>
+</html>

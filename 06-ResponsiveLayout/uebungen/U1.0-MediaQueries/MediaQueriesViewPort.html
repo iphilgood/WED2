@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    @media (max-width: 300px) {
+      #a {
+        color: red;
+      }
+    }
+
+    @media (max-width: 300px) {
+      #a {
+        color: blue;
+      }
+    }
+
+    @media (min-width: 500px) and (min-device-pixel-ratio: 1.5)
+    /*Chrome*/
+
+    ,
+    (min-width: 500px) and (min-resolution: 1.5dppx)
+    /*Andere*/
+
+    {
+      #b {
+        color: green;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <p id="a">A</p>
+  <p id="b">B</p>
+</body>
+
+</html>

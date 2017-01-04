@@ -1,0 +1,10 @@
+@import "arrow";
+
+$size: 50px;
+
+@each $pos in $positions {
+  .arrow-#{$pos} {
+    @include arrow(red, green, $size, $pos);
+    margin: 20px 0;
+  }
+}

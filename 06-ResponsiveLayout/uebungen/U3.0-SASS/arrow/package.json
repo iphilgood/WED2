@@ -1,0 +1,12 @@
+{
+  "name": "arrow",
+  "version": "1.0.0",
+  "description": "Arrow Mixin",
+  "main": "index.js",
+  "author": "Phil Schilter",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-sass": "^3.0.0"
+  }
+}

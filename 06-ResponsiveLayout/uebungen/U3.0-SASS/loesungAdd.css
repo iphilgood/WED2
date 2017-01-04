@@ -1,0 +1,5 @@
+@charset "UTF-8";
+.symbol:after {
+  content: "?"; }
+.symbol:before {
+  content: "¿"; }
