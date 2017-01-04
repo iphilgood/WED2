@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>07-BoxSizing-FlexibleLayout-AbsolutePosition+ComputedValues+Overflow</title>
+  <style>
+    .box {
+      box-sizing: border-box;
+      border: black solid 1px;
+      text-align: center;
+    }
+
+    .box1 {
+      top: 0;
+      left: 0;
+      right: 0;
+      line-height: 100px;
+      background-color: aqua;
+    }
+
+    .box2 {
+      width: 100px;
+      /* does not work for multi-line
+      line-height: calc(100vH - 200px);
+      */
+      background-color: antiquewhite;
+      vertical-align: middle;
+    }
+
+    .box2>div {
+      padding-top: calc(50vh - 100px);
+    }
+
+    .box3 {
+      line-height: 100px;
+      background-color: lightcoral;
+    }
+
+    .box4 {
+      width: 100px;
+      background-color: darkseagreen;
+    }
+
+    .box5 {
+      background-color: gold;
+      width: calc(100% - 200px);
+    }
+
+    .container .box {
+      float: left;
+      vertical-align: top;
+    }
+
+    .box3 {
+      clear: left;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box box1">box1</div>
+
+  <div class="container">
+    <div class="box box2">
+      <div>box2 <br> lakda;dkas sa;dksa;dkas; </div>
+    </div>
+    <div class="box box5">box5<br> Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+      magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+      no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+      diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+      et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet
+    </div>
+    <div class="box box4">box4</div>
+  </div>
+
+  <div class="box box3">box3</div>
+</body>
+
+</html>
