@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>WED2 - Web Security: Übung Login Security</title>
+		<link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+		<link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+		<script src="../HSR.Template.Exercises/solutions.js"></script>
+		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	</head>
+	<body>
+		<h1>
+			<a class="backlink" href="../index.html">⇦</a>
+			WED2 - Web Security: Übung Login Security
+			<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+		</h1>
+
+
+		<p style="background: maroon; color: white; padding: 1rem;">
+			Verwenden Sie gelerntes Wissen aus dieser Übung nicht zum Fahren von Angriffen gegen externe Systeme oder Systeme der HSR!<br />
+			<strong>Das Angreifen von Systemen ist in der Schweiz ein <a style="color: silver;" href="http://www.vermoegensdelikte.ch/computerdelikte" target="_blank">Delikt</a>
+			und die Administratoren der HSR verstehen keinen Spass!</strong><br />
+			Sie bewegen sich nicht anonym im Netz. Aufgrund der Identifikation im Netzwerk können Verursacher von Angriffen leicht festgestellt werden.
+		</p>
+
+
+		<h2>Schutz von Login Daten (20min)</h2>
+		<p>Für diese Übung verwenden wir eine simple Login-Applikation auf Node.js Basis: <a href="account.js" target="_blank">account.js</a></p>
+		<p>
+			Öffnen Sie eine Shell, wechseln Sie ins Verzeichnis &quot;server&quot; und installieren Sie die Abhängigkeiten mittels npm und dem enthaltenen Package-File:
+			<pre><code>npm install</code></pre>
+		</p>
+
+		<ol>
+			<li>Starten Sie die Login-Applikation mittels <pre><code>node account.js</code></pre> auf ihrem Rechner und öffnen Sie die Applikation im Browser: <a href="http://localhost:8084" target="_blank">localhost:8084</a></li>
+			<li>
+				Starten Sie die Entwickler-Tools und wechseln Sie zur Netzwerk-Ansicht (Beim Firefox Tab "Netzwerk": <a href="http://blog.mozilla.org/hacks/files/2013/05/network-monitor.png" target="_blank">network-monitor.png</a>).
+				Wenn Sie sich mit Wireshark vom CN1 bereits auskennen, können Sie auch diesen verwenden.
+
+				<ol style="list-style-type: lower-alpha;">
+					<li>Loggen Sie sich ein und schauen sie sich die übertragenen Parameter des Login-Requests an.</li>
+					<li>Wie werden Benutzername und Passwort übertragen?
+						<div class="solution">
+							<figure>
+								<img src="solution/requestHeaderformData.png" alt="Request Header form data" style="width: 90%;"/>
+								<figcaption>Formular Daten werden als Parameter im Klartext im HTTP Request übertragen.</figcaption>
+							</figure>
+
+							<figure>
+								<img src="solution/wireSharkLoginCapture.png" alt="Wireshark capture of login request" style="width:90%;" />
+								<figcaption>Wireshark Mitschnitt des Login Requestes. Die Post-Request Parameter werden als &quot;line-based text data&quot;  im Klartext übertragen.</figcaption>
+							</figure>
+						</div>
+					</li>
+					<li>Wer hat Zugriff auf die Daten?
+
+						<div class="solution">
+							<p>Benutzername und Passwort werden im Klartext übertragen. Jeder, der den Verkehr mitschneiden kann,
+								kann auch die Login Daten mitlesen (die Andern Benutzer in einem unverschlüsselten WLAN, andere Benutzer in einem Bus-System, die NSA, Provider, Proxy-Server Betreiber, ...).
+							</p>
+						</div>
+					</li>
+				</ol>
+
+			</li>
+			<li>Eine bereits in HTTP integrierte Möglichkeit, Serverzugriffe mit einer Authentifizierung zu schützen, bietet HTTP-Authentifizierung <a href="http://de.wikipedia.org/wiki/HTTP-Authentifizierung" target="_blank">http://de.wikipedia.org/wiki/HTTP-Authentifizierung</a>.
+				Eingesetzt wird dies vor Allem zur einfachen Absicherung ganzer Verzeichnisstrukturen auf dem Server gegen unerlaubte Zugriffe.
+
+				Die kleine Login-Applikation besitzt ein &quot;Intranet&quot;, das mittels HTTP-Authentifizierung abgesichert ist.
+				Rufen Sie dazu <a href="http://localhost:8084/intranet">http://localhost:8084/intranet</a> auf (Benutzername: hsr, Passwort: welcome).
+
+				<ol style="list-style-type: lower-alpha;">
+					<li>Schauen Sie sich wiederum den Request-Header an.</li>
+					<li>Finden Sie heraus, welches Header-Feld für die Authentisierung zuständig ist?
+
+						<div class="solution">
+							<figure>
+								<img src="solution/requestBasicAuthData.png" alt="Wireshark capture of basic authentication login request" style="width: 90%;" />
+								<figcaption>Login und Passwort der HTTP-Authentifizierung werden im Feld &quot;Authorization&quot; übertragen.</figcaption>
+							</figure>
+
+							<figure>
+								<img src="solution/wireSharkBasicAuthCapture1.png" alt="Wireshark capture of basic authentication login request" style="width: 90%;" />
+								<figcaption>Wireshark Mitschnitt HTTP Basic Authentication Requests. Benutzername und Passwort werden base64 codiert im Klartext im Header mitgeschickt.</figcaption>
+							</figure>
+						</div>
+					</li>
+					<li>Was überträgt der Browser, um sich beim Server zu authentisieren? (Tipp: benutzen Sie <a href="https://www.base64decode.org/" target="blank">https://www.base64decode.org/</a> zur Decodierung).
+
+						<div class="solution">
+							<p>Der Browser überträgt &quot;Basic aHNyOndlbGNvbWU=&quot;. &quot;aHNyOndlbGNvbWU=&quot; ist base64 codiert. Decodierter Wert: &quot;hsr:welcome&quot; Der Browser schickt hier also Benutzername und Passwort im Klartext mit, getrennt durch einen Doppelpunkt.</p>
+						</div>
+					</li>
+					<li>Wer hat Zugriff auf die Login-Daten?
+
+						<div class="solution">
+							<p>Benutzername und Passwort werden im Klartext übertragen. Bei der bas64-Codierung handelt es sich nur um eine Zeichencodierung, keine Verschlüsselung. Genau wie beim Formular kann jeder darauf zugreifen, der den HTTP Request mitschneiden kann
+							</p>
+						</div>
+					</li>
+				</ol>
+			</li>
+			<li>
+				Welche Möglichkeiten gibt es, sowohl die Post-Parameter des Formulars wie auch die Login-Daten der HTTP-Authentifizierung vor Dritten zu schützen?
+
+				<div class="solution">
+					<ul>
+						<li>
+							(Bevorzugte Lösung) Verwendung von TLS (HTTPS). Dadurch werden alle Requests verschlüsselt.
+							Applikationen, die eine Authentisierung besitzen, sollten immer durch TLS geschützt werden.<br />
+
+							Dazu wird die Serverapplikation im TLS Modus betrieben sowie ein privater Schlüssel und ein Zertifikat hinterlegt (Beispiel für Node.js <a href="https://docs.nodejitsu.com/articles/cryptography/how-to-use-the-tls-module" target="_blank">https://docs.nodejitsu.com/articles/cryptography/how-to-use-the-tls-module</a>).
+
+							<br>&rArr; Eine einfache und kostenlose Möglichkeit, automatisiert HTTPS-Zertifikate für eine Domain auszustellen,
+							bietet das <a href="https://letsencrypt.org/getting-started/" target="_blank">Let's Encrypt Projekt</a>.
+						</li>
+						<li>
+							Die Applikation nur über IPsec (VPN) verfügbar machen. Wichtig: Wirklich Sicher ist die Übertragung nur, wenn das VPN vom gleichen Server angeboten wird wie die Applikation.
+							Ansonsten werden die Daten zwischen dem VPN Endpunkt und dem Applikationsserver im Klartext übertragen.
+							Diese Variante sollte nur gewählt werden, wenn alte, bestehende Services abgesichert werden sollen ohne deren Serverkonfiguration zu verändern.
+							Wann immer möglich ist die Variante HTTPS zu bevorzugen. VPN kann jedoch zusätzlich eingesetzt werden.
+						</li>
+					</ul>
+					<p>
+						Login Daten sollten <strong>NIEMALS</strong> durch selbst gebaute Verschlüsselungsprozesse für die Übertragung geschützt werden.
+						Selbst gebaute Sicherheitsmechanismen sind in fast allen Fällen unsicherer als Sicherheitsmechanismen,
+						die ein Gemeinschaftswerk von Entwicklern darstellen, die sich seit Jahren damit auseinandersetzen.</p>
+				</div>
+			</li>
+		</ol>
+  </body>
+</html>

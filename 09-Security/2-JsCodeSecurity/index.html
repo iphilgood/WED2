@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>WED2 - Web Security: Übung JavaScript Code Security</title>
+		<link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+		<link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+		<script src="../HSR.Template.Exercises/solutions.js"></script>
+		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	</head>
+	<body>
+		<h1>
+			<a class="backlink" href="../index.html">⇦</a>
+			WED2 - Web Security: Übung JavaScript Code Security
+			<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+		</h1>
+
+
+		<p style="background: maroon; color: white; padding: 1rem;">
+			Verwenden Sie gelerntes Wissen aus dieser Übung nicht zum Fahren von Angriffen gegen externe Systeme oder Systeme der HSR!<br />
+			<strong>Das Angreifen von Systemen ist in der Schweiz ein <a style="color: silver;" href="http://www.vermoegensdelikte.ch/computerdelikte" target="_blank">Delikt</a>
+			und die Administratoren der HSR verstehen keinen Spass!</strong><br />
+			Sie bewegen sich nicht anonym im Netz. Aufgrund der Identifikation im Netzwerk können Verursacher von Angriffen leicht festgestellt werden.
+		</p>
+
+
+		<h2>Hinweise</h2>
+		<p>
+			Wir verwenden in dieser Übung Reguläre Ausrücke (Regex). Diese vereinfachen die Aufgaben, sind jedoch nicht Prüfungsrelevant.
+		</p>
+
+
+		<h2>Dynamic code execution is evil (15min)</h2>
+		<p>Für diese Übung verwenden wir eine simple Rechner-Applikation auf Node.js Basis: <a href="calculator.js" target="_blank">calculator.js</a></p>
+		<p>
+			Öffnen Sie eine Shell, wechseln Sie ins Verzeichnis &quot;server&quot; und installieren Sie die Abhängigkeiten mittels npm und dem enthaltenen Package-File:
+			<pre><code>npm install</code></pre>
+		</p>
+
+		<ol>
+			<li>Starten Sie die Rechner-Applikation mittels <pre><code>node calculator.js</code></pre> auf ihrem Rechner
+				und öffnen Sie die Applikation im Browser: <a href="http://localhost:8082" target="_blank">localhost:8082</a></li>
+			<li>Schauen sie sich an, wie die Berechnung durchgeführt wird. Schaffen Sie es, durch eine inkorrekte Eingabe einer Rechnung,
+				auf dem Server einen Error oder eine Exception zu werfen?
+
+				<div class="solution">
+					<p>Hier gibt es ganz viele Möglichkeiten. Durch die Eingabe &quot;1++++2&quot; erzeugen Sie beispielsweise einen Syntaxerror.
+					Die Eingabe &quot;Mat.round(3.14125)&quot; wirft einen Fehler, weil &quot;Mat&quot; nicht gefunden wird.
+					</p>
+					<p>Noch schlimmer als eine Exception wäre jedoch Code, der den Server verändert, der private Server Informationen wie z.B. Sessions, Secrets oder private Daten aus einer Datenbank dem Angreifer ausliefert.</p>
+				</div>
+			</li>
+			<li>Nebst der von Ihnen gefunden Schwachstelle gibt es in JavaScript noch weitere Möglichkeiten, beliebigen Code auszuführen. Welche sind das?
+				<div class="solution">
+					<p>nebst eval() erlauben die folgenden Funktion das Ausführen von Code in Form eines Strings:</p>
+					<ul>
+						<li>new Function</li>
+						<li>setTimeout</li>
+						<li>setInterval</li>
+					</ul>
+				</div>
+			</li>
+			<li>Die Beste Möglichkeit, Sicherheitslücken durch diese Funktionen zu vermeiden, ist ein Verzicht darauf. Machen Sie zwei konzeptionelle Vorschläge, wie diese Funktionen im gegebenen Calculator-Beispiel ersetzt werden könnten.
+				<div class="solution">
+					<ul>
+						<li>Funktionalität auf das Minimum beschränken, z.B. Rechnungen mit nur zwei Operanden und einem Operator erlauben
+							&rarr; Anstelle der generellen Eingabe werden nur noch zwei Eingabefelder und eine Selectbox für den Operator benötigt.
+							Damit kann auf eine Evaluation verzichtet werden und stattdessen die Rechnung mit eigenen kleinen einfachen Funktionen umgesetzt werden.
+						</li>
+						<li>
+							Math-Parser schreiben oder eine Math-Parse-Library verwenden, die eine Rechnung parst, in ihre Bestandteile aufsplitted, einen AST erstellt und anschliessend die Rechnung mittels klassischer Operationen berechnet.
+						</li>
+					</ul>
+				</div>
+			</li>
+			<li>Es gibt allerdings Anwendungsfälle, die das Ausführen von dynamischem Code unumgänglich machen (Auch wenn sie selten sind!). Sichern Sie die Berechnung der Rechnung mit folgenden Massnahmen ab, ohne dabei auf die betreffende Funktion zu verzichten.
+				<ol>
+					<li>Verhindern Sie, das Syntaxfehler zu einem Error führen, informieren Sie jedoch über die Konsole, das es einen Fehler gegeben hat.
+						<div class="solution">
+							<pre class="prettyprint"><code class="language-javascript" style="background: white;"><!--
+--><span style="opacity: 0.25;"><!--
+-->// calculator.js
+// ...
+app.post('/', function (request, response) {
+	var result = '';
+	var calculation = request.body.calculation || '';
+
+	if(request.body && request.body.calculation && request.body.calculation != '') {<!--
+--></span>
+		try {
+			result = eval(request.body.calculation);
+		} catch (e) {
+			console.warn(e);
+		}<!--
+--><span style="opacity: 0.25;">
+	}
+	response.render('calculator', { title: 'Simple calculator', result: result, calculation: calculation });
+});
+// ...</span><!--
+							--></code></pre>
+						</div>
+					</li>
+					<li>Verwendung von Strict mode
+
+						<div class="solution">
+							<pre class="prettyprint"><code class="language-javascript" style="background: white;"><!--
+--><span style="opacity: 0.25;"><!--
+-->// calculator.js
+// ...
+app.post('/', function (request, response) {<!--
+--></span>
+	'use strict';<!--
+--><span style="opacity: 0.25;">
+
+	var result = '';
+	var calculation = request.body.calculation || '';
+
+	if(request.body && request.body.calculation && request.body.calculation != '') {
+		try {
+			result = eval(request.body.calculation);
+		} catch (e) {
+			console.warn(e);
+		}
+	}
+	response.render('calculator', { title: 'Simple calculator', result: result, calculation: calculation });
+});
+// ...</span><!--
+							--></code></pre>
+						</div>
+					</li>
+					<li>
+						Verhindern Sie, das Befehle ausgeführt werden, die keine Rechnungen sind. <br />
+						<strong>Tipp</strong>: Schauen Sie sich die &quot;test()&quot;-Funktion von Javascript an. Einen oder mehrere (+) Buchstaben (\d) matchen Sie mit dem Regulären Ausdruck &quot;[\d]+&quot;, eine Liste von Zeichen (z.B. a,b,c) mit &quot;[abc]+&quot; (Ausführlichere Liste mit möglichen Ausdrücken: <a href="http://de.wikipedia.org/wiki/Regul%C3%A4rer_Ausdruck#Ein_Zeichen_aus_einer_Auswahl" target="_blank">Regex, Ein zeichen einer Auswahl</a>). Reguläre Ausdrücke werden in JavaScript wie folgt definiert (Beispiel a,b,c):
+						<pre class="prettyprint"><code class="language-javascript" style="background: white;"><!--
+-->// Folgendes Beispiel matcht beliebig lange Wörter bestehend aus a,b und c:
+// a, aa, cbb, bca, bbbb, bbca, abc, caaab, ...
+var regex = /^[abc]+$/;<!--
+						--></code></pre>
+
+						<div class="solution">
+							<pre class="prettyprint"><code class="language-javascript" style="background: white;"><!--
+--><span style="opacity: 0.25;"><!--
+-->// calculator.js
+// ...
+app.post('/', function (request, response) {
+	var result = '';
+	var calculation = request.body.calculation || '';
+	if(request.body && request.body.calculation && request.body.calculation != '' </span>&& /^[\d+-/*]+$/.test(request.body.calculation)<span style="opacity: 0.25;">) {
+		try {
+			result = eval(request.body.calculation);
+		} catch (e) {
+			console.warn(e);
+		}
+	}
+	response.render('calculator', { title: 'Simple calculator', result: result, calculation: calculation });
+});
+// ...
+</span><!--
+							--></code></pre>
+						</div>
+					</li>
+				</ol>
+			</li>
+		</ol>
+  </body>
+</html>

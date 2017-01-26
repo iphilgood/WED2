@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>{{title}}</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<nav>
+			<a href="/">&#x21bb;&nbsp;Reload</a>
+			<span>&nbsp;|&nbsp;</span>
+			<a href="/intranet">&boxplus;&nbsp;Intranet</a>
+		</nav>
+
+		<h1>
+			{{title}}
+			<a href="/">&#x21bb;&nbsp;Reload</a>
+		</h1>
+
+		{{#if loginName}}
+			<h2>Welcome {{loginName}} (temporary)</h2>
+		{{else}}
+			<form method="post" action="/">
+				<div>
+					<input name="login" placeholder="login name" type="text" />
+					<input name="password" placeholder="password" type="password" />
+				</div>
+				<div>
+					<button type="submit">Login</button>
+				</div>
+			</form>
+		{{/if}}
+	</body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>WED2 - Web Security: Repetitionsfragen</title>
+		<link rel="icon" href="./HSR.Template.Exercises/icon-document.png" type="image/png">
+
+		<link rel="stylesheet" type="text/css" href="./HSR.Template.Exercises/documentStyle.css" />
+		<script src="./HSR.Template.Exercises/solutions.js"></script>
+		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	</head>
+	<body>
+		<h1>
+			<a class="backlink" href="./index.html">⇦</a>
+			WED2 - Web Security: Repetitionsfragen
+			<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+		</h1>
+
+
+		<h2>XSS</h2>
+		<ol>
+			<li>Beschreiben Sie in wenigen Worten, was Cross-Site-Scripting ist.
+
+				<div class="solution">
+					<p>Cross-Site-Scripting ist eine Injection Attacke. Ein Angreifer versucht JavaScript-Code in ein System einzuschleusen, sodass dieser bei andern Benutzern geladen und ausgeführt wird.</p>
+				</div>
+			</li>
+			<li>Welche der folgenden Angriffe kann ein Angrifer mit XSS durchführen?<br />
+				<ul>
+					<li>Zugriff auf das lokale Dateisystem</li>
+					<li>Zugriff auf Kamera und Mikrofon</li>
+					<li>Auslesen der Browser-History</li>
+					<li>Öffnen einer P2P-Verbindung</li>
+					<li>Speichern von Daten im Browser</li>
+					<li>Auslesen des Session-Cookie</li>
+					<li>Lokalisierung des Clients (Position auslesen)</li>
+				</ul>
+
+				<div class="solution">
+					<ul>
+						<li>Zugriff auf Kamera und Mikrofon (Je nach Browsereinstellung nur mit Erlaubnis)</li>
+						<li>Öffnen einer P2P-Verbindung (z.B. WEBRTC)</li>
+						<li>Speichern von Daten im Browser (Localstorage)</li>
+						<li>Auslesen des Session-Cookie (Nur wenn kein HttpOnly Cookie)</li>
+						<li>Lokalisierung des Clients (Position auslesen) (Je nach Browsereinstellung nur mit Erlaubnis)</li>
+					</ul>
+				</div>
+			</li>
+		</ol>
+
+
+		<h2>Eval</h2>
+		<ol>
+			<li>Welche Gefahren birgt Eval auf dem Server und auf dem Client?
+
+				<div class="solution">
+					<p>Eval erlaubt das Auführen von beliebigem Code. Analog XSS kann ein Angreifer auf dem Client sämmtliche Funktionen nutzen, die der Browser anbietet. Auf dem Server kann der Angreifer entsprechend Funktionen und Variablen benutzen, die Node zur Verfügung stellt.</p>
+				</div>
+			</li>
+			<li>Welche der folgenden Angriffe kann ein Angrifer mit Eval auf dem Node-Server durchführen?<br />
+				<ul>
+					<li>Zugriff auf das lokale Dateisystem</li>
+					<li>Auslesen der Browser-History</li>
+					<li>Öffnen einer P2P-Verbindung</li>
+					<li>Auslesen der Session</li>
+					<li>Zugriff auf das Dateisystem des Benutzers</li>
+					<li>Zugriff auf Server-Konfiguration</li>
+					<li>Zugriff auf angebundene Datenbanken</li>
+				</ul>
+
+				<div class="solution">
+					<ul>
+						<li>Zugriff auf das lokale Dateisystem</li>
+						<li>Auslesen der Session</li>
+						<li>Zugriff auf Server-Konfiguration</li>
+						<li>Zugriff auf angebundene Datenbanken</li>
+					</ul>
+				</div>
+			</li>
+			<li>Warum gibt es in JavaScript und PHP &quot;eval()&quot; und in Java nicht?
+
+				<div class="solution">
+					<p>Java ist eine kompilierte Sprache und erlaubt kein Erzeugen von Code zur Laufzeit. PHP und JavaScript als interpretierte Sprachen ermöglichen dies einerseits von der technischen Seite her und bieten es andererseits über die Eval-Funktion explizit an.</p>
+				</div>
+			</li>
+		</ol>
+	</body>
+</html>

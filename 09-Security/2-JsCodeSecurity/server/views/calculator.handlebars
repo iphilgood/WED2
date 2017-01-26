@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>{{title}}</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>
+			{{title}}
+			<a href="/">&#x21bb;&nbsp;Reload</a>
+		</h1>
+
+		<form method='post' action='/'>
+			<input type="text" id="calculation" name="calculation" placeholder="Enter a calculation" value="{{calculation}}" />
+			<button type="submit">Calculate</button>
+		</form>
+
+		{{#if result}}
+		<output id="result" name="result">{{result}}</output>
+		{{/if}}
+	</body>
+</html>
