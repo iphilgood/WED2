@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>WED2 Übung Woche 07</title>
+
+		<link rel="stylesheet" type="text/css" href="./resources/documentStyle.css">
+		<script src="./resources/solutions.js"></script>
+
+	</head>
+	<body>
+		<h1>
+		WED2 Übungen Woche 07
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+		</h1>
+
+
+
+		<h2>Allgemeine Hinweise</h2>
+		<ul>
+			<li><img data-type="icon-difficult" src="./resources/mind.svg" /> kennzeichnet Aufgaben für Fortgeschrittene
+				oder zusätzliche Informationen zum Thema innerhalb der Lösungen. Diese Inhalte sind nicht Prüfungsrelevant.
+				Lösen Sie diese Aufgaben nachdem Sie alle andern Aufgaben und das Testat gelöst haben.</li>
+		</ul>
+
+
+		<h2>Übungen Woche 07</h2>
+		<ol>
+			<li>Sass + Flexbox
+				<ul>
+					<li> Schauen Sie dieses <a href="https://egghead.io/lessons/css-reuse-flexbox-styles-with-a-sass-mixin">Video</a>.<br>
+						Ein vereinfachtes html und Scss File finden Sie im diesem Folder (ACHTUNG geändert für Lösungen)</li>
+					<li> Beantworten Sie die folgenden Fragen <br>
+						 (1) Wie sieht das generierte CSS aus? Warum erscheint dort keine Klasse flex-container? <br>
+						 <div class="solution">
+							<p>
+								Wenn Ihr Sass/SCSS Precompiler nicht funktioniert, können Sie Codepen.io nutzen
+							</p>
+							<p>
+								flex-container im Sass/SCSS File ist ein Mixin. Mixins erscheinen nie im finalen CSS File.
+							</p>
+						</div>
+
+						 (2) Warum hat das Mixin flex-container einen Parameter $alignment: null? Was wäre der
+							Effekt wenn statt null ein anderer Default Wert genutzt würde, z.b. $alignment: flex-end ?<br>
+						 <div class="solution">
+							<p>
+								Mit $alignment: null wird dieser Wert default-mässig nicht gesetzt (ausgelassen)
+							</p>
+							<p>
+								In der aktuellen Konfiguration hat es keinen Effekt, da beim .side-by-side (welches die 
+								Default-Werte nutzt) das Align-Items keinen Effekt hat, da beide Input Wrapper die gleicht Höhe haben.
+							</p>
+						</div>
+						 (3) Lässt sich auch mittels Vererbung das gleiche CSS generieren? Nennen Sie einen Vorteil bzw. Nachteil?
+						 <div class="solution">
+							<p>
+								Im Prinzip ja, aber die Parametrierung ist nicht möglich. Daher kann von der Klasse flex-container nur 
+								display: flex und flex-flow: wrap definiert werden. Die restlichen Eigenschaften müssen für 
+								.input-wrapper und .side-by-side individuell definiert werden. Dies zeigt die Vorteile der 
+								parametrierbaren Mixins.
+							</p>
+						</div>
+
+						 </li>
+				</ul></li>
+			<li> Machen Sie das Formular Responsive (nutzen Sie aber weiterhin Sass)
+				Mit genügend X-Platz sollen Label und Input nebeneinander gezeigt werden 
+				(siehe dazu Folien zu Responsive Forms)<br>
+  				Erstellen Sie zwei Varianten. <br>
+  				(1) Eine mit Media-Queries (Umstellung column, row je nach Platz x) <br>
+				(2) Eine ohne Media-Queries</li>
+				 <div class="solution">
+					<p>
+						Mit Media Queries: bei entsprechender Grösse die flex-direction von 
+						input-wrapper und side-by-side von row auf column umstellen.
+					</p>
+					<p>
+						Ohne Media Queries: im Mixin: flex-container "flex-flow: wrap"
+						einfügen.
+					</p>
+				</div>
+				
+			<li> Analysieren sie beim Mondovino Site wie hier die "Herausforderungen für 
+					Responsive Web-Sites" gelöst wurden
+				 <div class="solution">
+					<p>
+						ohne Lösung
+					</p>
+				</div>
+			</li>
+			<li>Finden Sie aktuelle Beispiele von Sites die die Responsive Patterns 
+			“Off Canvas“, “Off Screen Menu“ und “Master dann Detail“ bzw. 
+			“Master und Detail“ implementieren.
+				<div class="solution">
+					<p>
+						ohne Lösung
+					</p>
+				</div>
+			</li>
+			<li>Diskutieren Sie wie der Mondovino Site "Progressive Disclosure" handhabt.
+				 <div class="solution">
+					<p>
+						ohne Lösung
+					</p>
+				</div>
+			</li>
+			<li>Implementieren Sie unter Nutzung von Flexbox-Layout die Responsive Layout Patterns 
+			“Mostly Fluid“, “Column Drop“, “Layout Shifter“, “Reflow“, “Expand“, “Sidebar/SidePic“.
+			Versuchen Sie dies möglichst ohne Media-Queries zu realisieren. 
+			Starten Sie dafür mit jedem Block als Lorem-Ipsum-Text 
+				 <div class="solution">
+					<p>
+						ohne Lösung
+					</p>
+				</div>
+			</li>
+		</ol>
+	</body>
+</html>

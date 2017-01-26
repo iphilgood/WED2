@@ -1,0 +1,15 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-content: flex-start;
+  flex-flow: wrap; }
+
+.input-wrapper input {
+  flex: 1 0 250px; }
+
+.side-by-side {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-flow: wrap; }

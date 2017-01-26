@@ -1,0 +1,24 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center; }
+
+.input-wrapper input {
+  flex: 1 0 250px; }
+
+.side-by-side {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end; }
+
+input, select {
+  height: 2em;
+  margin-left: 10px;
+  margin-right: 20px;
+  margin-bottom: 10px; }
+
+label {
+  margin-bottom: 10px;
+  margin-left: 10px; }
