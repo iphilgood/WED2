@@ -1,10 +1,21 @@
 @import "arrow";
 
-$size: 50px;
+$size: 30px;
 
 @each $pos in $positions {
-  .arrow-#{$pos} {
-    @include arrow(red, green, $size, $pos);
-    margin: 20px 0;
+  .arrow--#{$pos} {
+    @include arrow(paleturquoise, palevioletred, $size, $pos);
+    margin: 50px 0;
   }
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: 20px;
+  font-family: sans-serif;
+}
+
+p {
+  text-align: center;
 }

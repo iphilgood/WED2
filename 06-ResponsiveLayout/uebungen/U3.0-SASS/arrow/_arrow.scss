@@ -1,20 +1,41 @@
 $positions: top, right, bottom, left;
-$inversePositions: (top: bottom, right: left, bottom: top, left: right);
 
-@function inverse($pos) {
-  @return map-get($inversePosition, $pos);
+$inversePositions: (
+  top: bottom,
+  right: left,
+  bottom: top,
+  left: right
+);
+
+@function inversePositionOf($pos) {
+  @return map-get($inversePositions, $pos);
+}
+
+@function helperPosition($pos){
+  @if $pos == top or $pos == bottom {
+    @return left;
+  }
+  @else{
+    @return top;
+  }
 }
 
 @mixin arrow($color: rgb(255,0,0), $borderColor: rgb(0,255,0), $size: 20px, $position: top) {
+  $inverse: inversePositionOf($position);
+  $helper: helperPosition($position);
+
   & {
     position: relative;
-    background: #88b7d5;
-    border: 4px solid #c2e1f5;
+    background: $color;
+    border: 4px solid $borderColor;
+    padding: 20px;
+    max-width: 150px;
+    display: inline-block;
 
     &:after,
     &:before {
-      bottom: 100%;
-      left: 50%;
+      #{$inverse}: 100%;
+      #{$helper}: 50%;
       border: solid transparent;
       content: " ";
       height: 0;
@@ -25,16 +46,16 @@ $inversePositions: (top: bottom, right: left, bottom: top, left: right);
 
     &:after {
       border-color: rgba(136, 183, 213, 0);
-      border-bottom-color: #88b7d5;
-      border-width: 30px;
-      margin-left: -30px;
+      border-#{$inverse}-color: $color;
+      border-width: $size;
+      margin-#{$helper}: $size * -1;
     }
 
     &:before {
       border-color: rgba(194, 225, 245, 0);
-      border-bottom-color: #c2e1f5;
-      border-width: 36px;
-      margin-left: -36px;
+      border-#{$inverse}-color: $borderColor;
+      border-width: $size + 6px;
+      margin-#{$helper}: ($size + 6px) * -1;
     }
   }
 }

@@ -18,11 +18,12 @@ $mapInversePosition : (top : bottom, right : left, bottom : top,left : right);
   $inverse : inversePos($position);
   $combine : combine($position);
 
-  &{
+  & {
     position: relative;
     background: $color;
     border: 4px solid $borderColor;
   }
+
   &:after, &:before{
     #{$inverse}: 100%;
     #{$combine}: 50%;
@@ -41,6 +42,7 @@ $mapInversePosition : (top : bottom, right : left, bottom : top,left : right);
     border-width: $size;
     margin-#{$combine}: $size * -1;
   }
+
   &:before {
     border-color: rgba(194, 225, 245, 0);
     border-#{$inverse}-color: $borderColor;
