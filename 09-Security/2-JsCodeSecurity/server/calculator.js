@@ -16,11 +16,17 @@ app.get('/', function (request, response) {
 });
 
 app.post('/', function (request, response) {
+	'use strict';
+
 	var result = '';
 	var calculation = request.body.calculation || '';
 
-	if(request.body && request.body.calculation && request.body.calculation != '') {
-		result = eval(request.body.calculation);
+	if(request.body && request.body.calculation && request.body.calculation != '' && /^[\d+-*/]+$/.test(request.body.calculation)) {
+		try {
+			result = eval(request.body.calculation);
+		} catch(e) {
+			console.warn(e);
+		}
 	}
 	response.render('calculator', { title: 'Simple calculator', result: result, calculation: calculation });
 });

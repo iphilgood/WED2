@@ -1,9 +1,17 @@
-doctype
-html
-	head
-		title #{title}
-	body
-		a(href="/intranet") &#x21bb;&nbsp;Reload
-		h1 #{title}
-
-		h2 Welcome to the protected intranet
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>{{title}}</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="/intranet">&#x21bb;&nbsp;Reload</a>
+		<h1>{{title}}</h1>
+		<h2>Welcome to the protected intranet</h2>
+	</body>
+</html>
