@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>WED2 Übung  W10: Layering + JS OO</title>
+
+	<link rel="stylesheet" type="text/css" href="../../resources/documentStyle.css">
+	<script src="../../resources/solutions.js"></script>
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		WED2 Übung  W10: Layering + JS OO
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+ 	<h2>Einleitung</h2>
+	<p>
+		In der Vorlage (siehe Übungsordner) zur Aufgabe finden Sie eine vereinfachte Zoo-Applikation. In dieser Applikation können Sie Tiere (Panda, Lion) erwerben (technisch: Instanzen kreieren).
+		Die Tiere benötigen zum Überleben Futter (Bambus, Beef, Chicken) in unterschiedlicher Menge [kg] pro Zeit [Stunden] <i>(Mengen und Vorlieben frei erfunden)</i>:
+	</p>
+	<ul>
+		<li>Lion frisst 5 (kg) Beef innerhalb von 5 (Stunden)</li>
+		<li>Lion frisst 10 Chicken-(Wings) innerhalb von 1 (Stunde)</li>
+		<li>Panda frisst 10 (kg) Bambus innerhalb von 1 (Stunde)</li>
+	</ul>
+	<p>Die Tiere werden also nach einer bestimmten Zeit hungrig (1 Stunde = simulierte 10 Sekunden) und müssen gefüttert werden. Der Lion hat eine ganz besondere Vorliebe für Fleisch
+		und frisst bevorzugt Beef, anschliessend Chicken. Falls kein Futter mehr vorhanden sein sollte, kann er auch mit den Panda-Beständen gefüttert werden
+		(Lion frisst 1 Panda innerhalb von 24 Stunden).
+	</p>
+	<p>Die hier beschriebene Logik ist in der Vorlage (Zoo.js) bereits abgebildet. Auf der Oberfläche (Zoo.html) können Sie Futter bestellen sowie die Tiere "kreieren".<br />
+		Ihre Aufgabe besteht darin, den bestehenden Code zu verbessern, ohne dass die Logik verändert wird.
+	</p>
+	
+	<h2>Erste Schritte</h2>
+	<p>
+		Verschieben Sie dabei Logik aus der <i>UI CODE</i> Sektion in die <i>Business Logic CODE</i> Sektion. Parametrisieren Sie die UI-gebundenen Aufrufe wie <i>$("#name").val();</i>
+		die Business Logik sollte aufgrund der Testbarkeit keine direkten Zugriffe auf UI-Funktionen enthalten (mehr dazu in den Modulen SE1 sowie SE2).
+	</p>
+	<p><b>Machen Sie sich zuerst mit der Ausgangslage (siehe Vorlage-Ordner) vertraut.</b></p>
+	
+	<h2>Beantworten Sie die folgenden Fragen:</h2>
+	<ol>
+		<li>Gibt es unschöne Stellen im Code (Zoo.js); wo wurde Code kopiert?</li>
+		<li>Könnte man die kopierten Code-Fragmente zusammen fassen?<br /><i>Tipp: Siehe #createPanda / #createLion-Button Clicks</i></li>
+		<li>Lagern Sie die Panda/Lion spezifischen Funktionalitäten in eigene Funktionen aus.<br /><i>Tipp: Siehe Funktionen auf den Tier-Objekten.</i></li>
+		<li>Führen Sie "use strict" global ein.</li>
+	</ol>
+	<div class="solution">
+		<p>
+		Die einleitenden Fragen sind zur Anaylse des Codes gedacht; die Antworten finden sich direkt im folgenden Code (Zoo.js).
+		<code>
+			<pre class="prettyprint lang-js"><!--
+-->// -------------------------------------------------
+//               Business Logic CODE
+// -------------------------------------------------
+
+"use strict";
+
+var animals = [];
+var food = [];
+
+food.push({name: "bambus", amount : 3, amountPerDelivery : 3 });
+food.push({name: "grass", amount : 10, amountPerDelivery : 10 });
+food.push({name: "straw", amount : 10, amountPerDelivery : 10 });
+food.push({name: "beef", amount : 10, amountPerDelivery : 10, isMeet : true });
+food.push({name: "chicken", amount : 10, amountPerDelivery : 10, isMeet : true });
+
+
+function printAnimal(animal) {
+    return animal.name + "[" + animal.type + "]" + (animal.foodRequired() ? " -hungry" : "");
+}
+
+function isFoodRequired(animal) {
+    return animal.nextFeedAt == null || animal.nextFeedAt < +new Date();
+}
+
+function findFood(name){
+    for(var i = 0; i< food.length; ++i) {
+        if( food[i].name == name)
+        {
+            return food[i];
+        }
+    }
+}
+
+function addTime(hours) {
+    return +new Date() + hours * 10000; // new Date().setTime(new Date().getTime() + (hours*60*60*1000));
+}
+
+function feedAnimal( animal ){
+    for(var i = 0 ; i<animal.compatibleFood.length; ++i) {
+        var food = animal.compatibleFood[i];
+        var foodFound = findFood(food.name);
+
+        if (foodFound && foodFound.amount >= food.amount) {
+            animal.nextFeedAt = addTime(food.timeToNextFood);
+            foodFound.amount -= food.amount;
+            return true;
+        }
+    }
+    return false;
+}
+
+function createLion(name) {
+    return {
+        type: "lion",
+        name: name,
+        compatibleFood : [{name:"beef", amount: 5, timeToNextFood : 5}, {name:"chicken", amount: 10, timeToNextFood : 1}],
+        foodRequired: function () {
+            return isFoodRequired(this);
+        },
+        toString: function () {
+            return printAnimal(this);
+        },
+        feed: function () {
+            if(!feedAnimal(this)) {
+                var panda = animals.filter(function (x) { return x.type === "panda" && !x.isDead });
+                if (panda[0]) {
+                    this.nextFeedAt = addTime(24);
+                    panda[0].eaten();
+                    return true;
+                }
+            }
+            return true;
+        }
+    };
+}
+
+function createPanda(name) {
+    return {
+        type: "panda",
+        name: name,
+        compatibleFood : [{name:"bambus", amount: 1, timeToNextFood : 1}],
+        foodRequired: function () {
+            return !this.isDead && isFoodRequired(this);
+        },
+        toString: function () {
+            return (this.isDead ? "RIP " : '') + printAnimal(this);
+        },
+        eaten: function () {
+            this.isDead = true;
+        },
+        feed: function () {
+            return feedAnimal(this);
+        }
+    };
+}
+
+
+// -------------------------------------------------
+//                     UI CODE
+// -------------------------------------------------
+
+$(function() {
+    "use strict";
+
+    setInterval(function(){
+        showData();
+    }, 10);
+
+
+
+    function createAnimalEntry(animal,id ) {
+
+        var oldValue = $("#animal" + id);
+
+        if (oldValue.length> 0 ) {
+            $("span", oldValue[0]).text(animal.toString());
+            if(animal.foodRequired()) {
+                $("input", oldValue).show();
+            }
+            else
+            {
+                $("input", oldValue).hide();
+            }
+            return;
+        }
+
+        var div = $("&lt;div&gt;", {id : "animal" + id});
+        var span = $("&lt;span&gt;").text(animal.toString());
+        div.append(span);
+        var input = $("&lt;input&gt;", {value: "Feed", type: "button"});
+        input.click(function () {
+            if (animal.feed()) {
+                showFood();
+                showData();
+            }
+            else
+            {
+                input.val("No foood!");
+            }
+        });
+        div.append(input);
+        if(animal.foodRequired()) {
+            input.show();
+        }
+        else
+        {
+            input.hide();
+        }
+
+        $("#containerAnimals").append(div);
+
+    }
+
+    function showData(){
+        for(var i = 0; i< animals.length; ++i) {
+            createAnimalEntry(animals[i],i);
+        }
+    }
+
+    function createFoodEntry(food,id ) { //Note: Why can't this function be inline defined?
+        var oldValue = $("#food" + id);
+        if(oldValue.length> 0 )
+        {
+            $("span", oldValue[0]).text(food.name + "[amount: " + food.amount+" ]");
+            return;
+        }
+        var div = $("&lt;div&gt;", { id: "food" + id} );
+        var span = $("&lt;span&gt;").text(food.name + "[amount: " + food.amount+" ]").attr("data-id", id);
+        var reorder = $("&lt;input&gt;", {value: "Order", type: "button"});
+        reorder.click(function() {
+            reorder.prop("disabled", true);
+            setTimeout(
+                function () {
+                    food.amount += food.amountPerDelivery;
+                    span.text(food.name + "[amount: " + food.amount + " ]");
+                    reorder.prop("disabled", false);
+                }, 2000)
+        });
+        div.append(span);
+        div.append(reorder);
+        $("#containerFood").append(div);
+
+    }
+
+    function showFood(){
+        for(var i = 0; i< food.length; ++i) {
+            createFoodEntry(food[i],i);
+        }
+    }
+
+    $("#createPanda").click(
+        function() {  // creates Panda Object
+            animals.push(createPanda($("#name").val()));
+            showData();
+        });
+
+    $("#createLion").click(
+        function() { // creates Lion Object
+            animals.push(createLion($("#name").val()));
+            showData();
+        });
+
+    showFood();
+    showData();
+});<!--
+		--></pre></code>
+		</p>
+	</div>
+</body>
+</html>

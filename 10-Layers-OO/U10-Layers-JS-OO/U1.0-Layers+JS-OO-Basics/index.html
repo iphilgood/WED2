@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>WED2 Übung  W10: Layering + JS OO Basics</title>
+
+	<link rel="stylesheet" type="text/css" href="../../resources/documentStyle.css">
+	<script src="../../resources/solutions.js"></script>
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		WED2 Übung  W10: Layering + JS OO Basics
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+ 	<h2>Einleitung</h2>
+	<p>
+		In der Vorlesung haben wir mehrere Beispiele zu den Themen MVC-Layering
+        und JS-OO am simplen Beispiel "Counter" angeschaut.
+        In diesem Folder sind diese Beispiele nochmals abgelegt 
+        (zum Teil leicht adapriert).
+        Die folgenden Fragen beziehen sich auf diese Files.
+	
+	<h2>Fragen zu NonMVC-Counter.html</h2>
+    Finden Sie drei oder mehr Probleme im Code
+    <div class="solution">
+        <ul>
+            <li>HTML und JS nicht getrennt. Damit Controller im HTML. 
+            Damit kennt der View die updateView() Methode und eine globale Variable</li>
+            <li>Nutzung von globaler Variable globalCounter</li>
+            <li>Bei jedem updateView() wird document.getElementById("countDisplay"); 
+            aufgerufen. Dies ist unnötig. Die Variable 'display' könnte ausserhalb
+            der updateView Methode einmal zugewiesen werden und als Closure-Variable
+            in updateView genutzt werden.</li>
+            <li>Kein Layering</li>
+        </ul>
+    </div>
+
+    <h2>Fragen zu MVC-Counter.html</h2>
+
+    <h3>'counter' ist hier keine globale Variable. Warum? Wie lässt sich das zeigen?</h3>
+    <div class="solution">
+    'counter' ist im Scope der anonymen onload Function 
+    definiert. In der console kann man das window Objekt auflisten. Hier gibt es keine Eintrag für counter.
+    </div>
+    <h3>Warum ist 'counter' in den EventListenern von btnUp und btnDown zugreifbar?</h3>
+    <div class="solution">
+    'counter' ist im Scope der neu definierten EventListener Funktionen defniert. 
+    Counter bleibt damit als Variable der Closure dieser
+    Funktionen zugreifbar.
+    </div>
+    <h3>Ist die Funktion countUp() global zugreifbar</h3>
+    <div class="solution">
+    nein
+    </div>
+
+    
+    <h2>Fragen zu OO-MVC-Counter1.html</h2>
+
+    <h3>Die Variable 'counter' wird mit einem über JSON
+    defnierten Objekt gefüllt. </h3>
+        <code>
+        <pre class="prettyprint lang-js">
+    const counter = {
+        count: 0,
+        delta: 1,
+        countUp: function () {this.count+=this.delta},
+        countDown: function () {this.count-=this.delta}
+    };
+        </pre>
+        </code>
+    Wie würde der Code-Abschnitt aussehen wenn statt JSON eine Factory-Funktion die mit einem leeren Objekt startet genutzt würde und alle Eigenschaften als Properties definiert sind?  
+    <div class="solution">
+       <code>
+       <pre class="prettyprint lang-js">
+    const makeCounter = function (iCount, iDelta) {
+        const counter = {};
+        counter.count = iCount;
+        counter.delta = iDelta;
+        counter.countUp = function () {this.count+=this.delta};
+        counter.countDown = function () {this.count-=this.delta};
+        return counter;
+    };
+        </pre>
+        </code>
+    </div>
+    <h3>Defnieren Sie eine Factory-Function bei der count und delta "privat" sind und nur delta nicht zugreifbar ist und counter nur lesbar über getCounter ausgelesen werden kann</h3>
+    <div class="solution">
+       <code>
+       <pre class="prettyprint lang-js">
+    const makeCounter = function (iCount, iDelta) {
+        const counter = {};
+        let count = iCount;
+        let delta = iDelta;
+        counter.countUp = function () {count += delta};
+        counter.countDown = function () {count -= delta};
+        counter.getCount = function () {return count}
+        return counter;
+    };
+        </pre>
+        </code>
+    </div>
+    <h3>Warum ergibt sich ein Fehler wenn man den Code 1 durch den Code 2 ersetzt? (nehmen Sie an, dass updateView im Kontext von Code2 in den Funktionen countDown und countUp aufgerufen wird.</h3>
+    Code 1:
+       <code>
+       <pre class="prettyprint lang-js">
+            btnUp.addEventListener("click", function () {counter.countUp(); updateView()});
+        </pre>
+        </code>
+    Code 2:
+       <code>
+       <pre class="prettyprint lang-js">
+            btnUp.addEventListener("click", counter.countUp});
+        </pre>
+        </code>
+    <div class="solution">
+    Funktioniert nicht, da countUp durch die zuardnung als Event-Handler vom Objekt
+    getrennt wurde. Beim click wird this der Button. Dieser hat aber kein count Objekt
+    daher resultiert ein Fehler.
+    </div>
+    <h3>Nennen SIe eine Vorteil, einen Nachteil davon wenn die Funktionen countDown und countUp die Funktion updateView direkt aufrufen? was ist Ihre Schlussfolgerung?</h3>
+    <div class="solution">
+    <ul>
+        <li>Vorteil: Jeder Update von Count (wenn durch diese FUnktionen initiert) führt zum Update des Views</li>
+        <li>Nachteil: Das Model ist zu eng mit dem View verknüpft. Dies passt nicht zum MVC Konzept</li>
+        <li>Schlussfolgerung: Lieber nicht machen</li>
+    </ul>
+    </div>
+
+    <h2>Fragen zu OO-MVC-Counter2.html</h2>
+
+    <h3>Verändern Sie den Code so, dass die Funktionen countUp und countDown auf dem Prototyp von Count definiert sind. Was muss mit der Variable delta geschehen? </h3>
+    <div class="solution">
+    Die Variable delta muss als (öffenliches) property definiert werden
+   <code>
+   <pre class="prettyprint lang-js">
+        const Counter = function (initDelta, initCount) {
+            this.delta = initDelta || 1;
+            this.count = initCount || 0;
+        };
+        Counter.prototype.countUp = function () {this.count=this.count+this.delta};
+        Counter.prototype.countDown = function () {this.count=this.count-this.delta};
+
+    </pre>
+    </code>
+    </div>
+
+    <h3>Nennen Sie einen Vorteil und einen Nachteil dieser Alternative </h3>
+    <div class="solution">
+    <ul>
+        <li>Vorteil: Gut wenn sehr viele Counter Objekte erstellt werden müssen. 
+        Die Funktionen werden nur einmal erstellt (spart Platz und Zeit)</li>
+        <li>Nachteil: Keine private Vars mehr</li>
+    </ul>
+    </div>
+
+    <h3>Warum ist es nicht möglich bei der "dymanic view creation" mit Code1 durch Code2 zu erstetzen?</h3>
+    Code 1:
+       <code>
+       <pre class="prettyprint lang-js">
+            counterRows.insertAdjacentHTML('beforeend',
+                    '&ltp&gtCount: &gtspan id="disp'+currentRowNr+'"&gt&lt/span&gt&lt/p&gt');
+        </pre>
+        </code>
+    Code 2:
+       <code>
+       <pre class="prettyprint lang-js">
+            counterRows.innerHTML += '&ltp&gtCount: &gtspan id="disp'+currentRowNr+'"&gt&lt/span&gt&lt/p&gt';
+        </pre>
+        </code>
+    <div class="solution">
+    Mit innerHTML += wird das gesammte HTML neu geparst. Die Event-Handler der schon erstellten Button-Rows gehen verlohren.
+    </div>
+
+    <h3>Was ist der Nachteil am 3-maligen Aufruf von insertAdjacentHTML? Was ist die Alternative</h3>
+    <div class="solution">
+    Mit jedem Aufruf von insertAdjacentHTML wird das HTML im Browser neu dargestellt.
+    Lieber den Sting gesammthaft zusammenstellen (z.B mit Template) und dann einen Aufruf
+    </div>
+
+    <h3>Warum könnte es sinnvoll sein, dass die neuen Element direkt document.createElement zu erstellen?</h3>
+    <div class="solution">
+    Damit hat man direkt die Pointer auf die Elemente und kann die Event-handler 
+    ohne nachfolgende Suche getElementByID anhängen. 
+    </div>
+    </div>
+</html>
