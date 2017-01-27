@@ -38,3 +38,5 @@ jspm_packages
 
 # SASS cache
 .sass-cache/
+.DS_Store
+Thumbs.db
