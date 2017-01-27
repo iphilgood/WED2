@@ -1,24 +1,25 @@
+form {
+  width: 80%;
+  margin: 0 auto; }
+
 .input-wrapper {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: center; }
-
-.input-wrapper input {
-  flex: 1 0 250px; }
+  align-content: flex-start;
+  flex-flow: wrap;
+  margin-bottom: 20px;
+  width: 100%; }
+  .input-wrapper label {
+    flex: 1 0 120px;
+    max-width: 220px;
+    margin-bottom: 5px; }
+  .input-wrapper input,
+  .input-wrapper select {
+    flex: 1 0 220px; }
 
 .side-by-side {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end; }
-
-input, select {
-  height: 2em;
-  margin-left: 10px;
-  margin-right: 20px;
-  margin-bottom: 10px; }
-
-label {
-  margin-bottom: 10px;
-  margin-left: 10px; }
+  flex-flow: wrap; }
