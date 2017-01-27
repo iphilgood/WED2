@@ -18,11 +18,9 @@ $mapInversePosition : (top : bottom, right : left, bottom : top,left : right);
   $inverse : inversePos($position);
   $combine : combine($position);
 
-  & {
-    position: relative;
-    background: $color;
-    border: 4px solid $borderColor;
-  }
+  position: relative;
+  background: $color;
+  border: 4px solid $borderColor;
 
   &:after, &:before{
     #{$inverse}: 100%;
