@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MVC Counter</title>
+    <script>
+        function LeanCounter(cInit) {
+            this.count = cInit;
+        }
+
+        LeanCounter.prototype.inc = function (delta) { this.count += delta; };
+
+        LeanCounter.prototype.demoInherit = function() { console.log("Inherited from LeanCounter"); };
+
+        function DeltaLeanCounter(cInit, dInit) {
+            LeanCounter.call(this, cInit);
+            this.delta = dInit;
+        }
+
+        DeltaLeanCounter.prototype = Object.create(LeanCounter.prototype);
+
+        DeltaLeanCounter.prototype.inc = function(d) {
+            LeanCounter.prototype.inc.call(this, d || this.delta);
+        };
+
+        const counter14 = new DeltaLeanCounter(14, 14);
+        counter14.inc(5);
+        counter14.demoInherit(); //-> Inherited from LeanCounter
+        console.log(DeltaLeanCounter.prototype === counter14.__proto__);
+        console.log(counter14.count); //-> 28 (expected)
+        console.log(typeof counter14); //-> object
+        console.log(counter14 instanceof DeltaLeanCounter); //-> true
+        console.log(counter14 instanceof LeanCounter); //-> true
+        console.log(counter14.constructor.name);
+
+    </script>
+</head>
+<body>
+<h1>MVC Counter</h1>
+
+
+<p>Count: <span id="countDisplay"></span></p>
+<button id="btnUp">Count Up</button>
+<button id="btnDown">Count Down</button>
+</body>
+</html>

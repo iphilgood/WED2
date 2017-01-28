@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Non MVC Counter</title>
+  <script>
+    gobalCounter = 0;
+
+    function updateView() {
+      const display = document.getElementById("countDisplay");
+      display.innerHTML = gobalCounter;
+    }
+
+    window.onload = function () {
+      // init
+      updateView();
+    }
+  </script>
+</head>
+
+<body>
+  <h1>Non-MVC Counter</h1>
+  <p>Count: <span id="countDisplay"></span></p>
+  <button id="btnUp" onclick="gobalCounter++; updateView()">Count Up</button>
+  <button id="btnDown" onclick="gobalCounter--; updateView()">Count Down</button>
+</body>
+
+</html>

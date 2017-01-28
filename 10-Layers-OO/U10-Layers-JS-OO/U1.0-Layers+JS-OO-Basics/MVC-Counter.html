@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>MVC Counter</title>
+  <script>
+    window.onload = function () {
+      // model
+      let counter = 0;
+
+      function countUp() {
+        counter++;
+      }
+
+      function countDown() {
+        counter--;
+      }
+
+      // view-refs
+      const countDisplay = document.getElementById("countDisplay");
+      const btnUp = document.getElementById("btnUp");
+      const btnDown = document.getElementById("btnDown");
+
+      // viewUpdate
+      function updateView() {
+        countDisplay.innerHTML = counter;
+      }
+
+      // controller / EventListener
+      btnUp.addEventListener("click", function () {
+        countUp();
+        updateView()
+      });
+
+      btnDown.addEventListener("click", function () {
+        countDown();
+        updateView()
+      });
+
+      // init
+      updateView();
+    }
+  </script>
+</head>
+
+<body>
+  <h1>MVC Counter</h1>
+  <p>Count: <span id="countDisplay"></span></p>
+  <button id="btnUp">Count Up</button>
+  <button id="btnDown">Count Down</button>
+</body>
+
+</html>

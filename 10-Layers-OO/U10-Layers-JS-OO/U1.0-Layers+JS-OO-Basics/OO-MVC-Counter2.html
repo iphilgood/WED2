@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>OO-MVC Counter 2</title>
+  <script>
+    window.onload = function () {
+      // model
+      const counters = [];
+
+      const Counter = function (initDelta, initCount) {
+        this.delta = initDelta || 1;
+        this.count = initCount || 0;
+      };
+
+      Counter.prototype.countUp = function() {
+        this.count += this.delta;
+      };
+
+      Counter.prototype.countDown = function(delta) {
+        this.count -= this.delta;
+      };
+
+      // ES6 Style
+      // class Counter {
+      //   constructor(initDelta, initCount) {
+      //     this.delta = initDelta;
+      //     this.count = initCount;
+      //   }
+
+      //   countUp() {
+      //     this.count += this.delta;
+      //   }
+
+      //   countDown() {
+      //     this.count -= this.delta;
+      //   }
+      // }
+
+      function addCoutnerRow() {
+        // dynamic model creation
+        const currentRowNr = counters.length + 1;
+        const counter = new Counter(currentRowNr, 0);
+        window.counter = counter;
+        counters.push(counter);
+
+        // dymanic view creation
+        const counterRows = document.getElementById("counterRows");
+        //TODO: create elements with document.createElement
+        // counterRows.insertAdjacentHTML('beforeend',
+        //   '<p>Count: <span id="disp' + currentRowNr + '"></span></p>');
+        // counterRows.insertAdjacentHTML('beforeend',
+        //   '<button id="btnUp' + currentRowNr + '">Count Up</button>');
+        // counterRows.insertAdjacentHTML('beforeend',
+        //   '<button id="btnDown' + currentRowNr + '">Count Down</button>');
+
+        const para = document.createElement("p");
+        const span = document.createElement("span");
+        span.setAttribute("id", "disp" + currentRowNr);
+        para.appendChild(span);
+
+        const uBtn = document.createElement("button");
+        uBtn.setAttribute("id", "btnUp" + currentRowNr);
+        const uBtnText = document.createTextNode("Count Up");
+        uBtn.appendChild(uBtnText);
+
+        const dBtn = document.createElement("button");
+        dBtn.setAttribute("id", "btnDown" + currentRowNr);
+        const dBtnText = document.createTextNode("Count Down");
+        dBtn.appendChild(dBtnText);
+
+        counterRows.appendChild(para);
+        counterRows.appendChild(uBtn);
+        counterRows.appendChild(dBtn);
+
+        // dynamic view reference creation
+        // counter.display = document.getElementById('disp' + currentRowNr);
+        // const uBtn = document.getElementById('btnUp' + currentRowNr);
+        // const dBtn = document.getElementById('btnDown' + currentRowNr);
+
+        counter.display = span;
+
+        // dynamically attach controllers / event listeners
+        uBtn.onclick = function () {
+          counter.countUp();
+          updateView()
+        };
+
+        // could also directly update display. This would eliminate need for counters array)
+        dBtn.onclick = function () {
+          counter.countDown();
+          updateView()
+        };
+
+        updateView();
+      }
+
+      // view-refs
+      const addRowsBtn = document.getElementById("addRow");
+
+      // viewUpdate
+      function updateView() {
+        counters.forEach(function (counter) {
+          counter.display.innerHTML = counter.count;
+        })
+      }
+
+      // controller / EventListener
+      addRowsBtn.addEventListener("click", addCoutnerRow);
+    }
+  </script>
+</head>
+
+<body>
+  <h1>OO-MVC Counter 2</h1>
+  <button id="addRow">Add Counter Row</button>
+  <div id="counterRows"></div>
+</body>
+
+</html>
