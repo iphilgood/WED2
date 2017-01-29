@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Functional JS</title>
+  <script>
+    // function duplicateEncode(word) {
+    //   return word
+    //     .toLowerCase()
+    //     .split('')
+    //     .map( function (a, i, w) {
+    //       console.log(a);
+    //       return w.indexOf(a) == w.lastIndexOf(a) ? '(' : ')'
+    //     })
+    //     .join('');
+    // }
+
+    // const word = duplicateEncode("recede");
+    // console.log(word);
+
+    // function countCharacters(chars) {
+    //   console.log(chars);
+    //   return chars
+    //     .reduce(function(memo, char) {
+    //       console.log(`${memo[char]}`);
+    //       memo[char] = memo[char] ? memo[char] + 1 : 1;
+    //       return memo;
+    //     }, {});
+    // }
+
+    // function duplicateEncode2(word) {
+    //   const chars = word.split('').map(ch => ch.toLowerCase());
+    //   const charsCount = countCharacters(chars);
+    //   return chars
+    //     .map(ch => charsCount[ch] > 1 ? ')' : '(' )
+    //     .join('');
+    // }
+
+    // const word2 = duplicateEncode2("recede");
+    // console.log(word2);
+
+    function deleteNth(arr, x) {
+      const memo = {}
+      return arr.filter((motive) => {
+        memo[motive] = (memo[motive] || 0) + 1;
+        return memo[motive] <= x
+      });
+    }
+
+
+    function countMotives(motives) {
+      return motives
+        .reduce(function(memo, motive) {
+          memo[motive] = memo[motive] ? memo[motive] + 1 : 1;
+          return memo;
+        }, {});
+    }
+
+  </script>
+</head>
+
+<body>
+  <h1>Functional JS</h1>
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>ES6 OO</title>
+
+	<link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+	<link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+	<script src="../HSR.Template.Exercises/solutions.js"></script>
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		ES6 OO
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+	<h2>Classe & Instance Properties</h2>
+	<p>
+	Was ist das Problem im Output des folgenden Codes? Erklären Sie die Ursache des Problems.
+	Wie lässt sich das Problem beheben?
+	</p>
+	
+<pre class="prettyprint lang-js"><code><!--
+-->function paddedText({text = '', padding = '***' } = {}) {
+   return `${padding} ${text} ${padding}`;
+}
+
+let myParagraph;
+
+class Paragraph {
+  constructor(initText = '') {
+    myParagraph = initText;
+  }
+  get paragraph() {
+    return myParagraph;
+  }
+  appendText(addText) {
+    myParagraph += addText;
+  }
+}
+
+const p2 = new Paragraph('lorem ');
+p2.appendText('gaudiamus ');
+console.log(p2.paragraph);
+// -> lorem gaudiamus 
+
+const p3 = new Paragraph('hello ');
+p3.appendText('again ');
+console.log(p3.paragraph);
+// -> hello again 
+
+console.log(p2.paragraph);
+// -> hello again 
+</code></pre>
+
+	<div class="solution">
+		<p>
+		Das Problem ist, dass offenbar Änderungen von Eigenschaften bei p3 auch zu 
+		Änderungen bei p2 führen. p2 und p3 sollten aber getrennte Werte haben.
+		Ein Update von p3 sollte nicht zu einer Änderung in p2 führen.
+		Grund für das Problem ist, dass myParagraph hier kein Property der neuen 
+		Objekte ist, sondern eine globale Variable. Da Problem lässt sich lösen indem
+		statt myParagraph auf this.myParagraph referenziert wird. Also: 
+
+			<pre class="prettyprint lang-js"><code><!--
+-->class Paragraph {
+  constructor(initText = '') {
+    this.myParagraph = initText;
+  }
+  get paragraph() {
+    return this.myParagraph;
+  }
+  appendText(addText) {
+    this.myParagraph += addText;
+  }
+}<!--
+		--></code></pre>
+		</p>
+	</div>
+	
+	<h2>Prototypen</h2>
+	<p>
+	Sie ergänzen den korrigierten Code der obigen Aufgabe um den folgenden Code. 
+	Welchen Output erwarten Sie -- oder gibt es einen Runtime-Fehler?
+	</p>
+	
+
+		<pre class="prettyprint lang-js"><code><!--
+-->Paragraph.prototype.paddedText = function(padding) {
+  return `${padding} ${this.myParagraph} ${padding}`;
+};
+console.log(p3.paddedText('+++'));	</code></pre>
+
+	<div class="solution">
+		<p>
+		Der Aufruf paddedText() ist erfolgreich. Die Funktion wird zuerst in der Instanz 
+		p3 gesucht, aber nicht gefunden. Danach wird im Prototyp von p3 weitergesucht.
+		Da dies der Prototyp der von Paragraph ist, wird die gesuchte Funktion paddedText
+		dort gefunden.
+		</p>
+	</div>
+
+
+    <div>
+        <p>
+            Im Folgenden werden die Eigenschaften von Paragraph.prototype aufgelistet. Erklären Sie den beobachteten Output! Warum wird nur die Methode paddedText im Prototyp von Pararaph gefunden? Welche anderen Eigenschaften hätten Sie erwartet?
+        </p>
+    </div>
+
+        <pre class="prettyprint lang-js"><code>console.log(Paragraph.prototype);
+// -> Paragraph { paddedText: [Function] }</code></pre>
+
+
+    <div class="solution">
+        <p>
+            Zu erwarten wäre gewesend, dass auch die Methoden die mit 'class' auf dem
+            Prototyp definiert wurden aufgelistet werden. Diese werden aber im Rahmen
+            der Definition mittels class als "nicht enumerierbar" gesetzt. Deswegen wird
+            hier nur die eine Methode aufgelistet welche "manuell" dem Prototyp
+            hinzugefügt wurde.
+        </p>
+    </div>
+
+    <div>
+        <p>
+        Erklären Sie den beobachteten Output! Warum wird die Methode printWith gefunden?
+        </p>
+    </div>
+
+        <pre class="prettyprint lang-js"><code><!--
+    -->Object.prototype.printWith = function(padding = '***') {
+  if (this instanceof Paragraph) {
+    console.log(this.paddedText(padding));
+  } else {
+    console.log(paddedText({ text: this.toString(), padding }));
+  }
+};
+p3.printWith('$$$');
+// -> $$$ hello again  $$$
+"hello WED2".printWith('@@@@');
+// -> @@@@ hello WED2 @@@@</code></pre>
+
+
+	<div class="solution">
+		<p>
+		Die printWith Methode ist auf dem prototyp des Konstruktors von Objekt definiert. 
+		Dadurch ist printWith zugreifbar von allen Objekten (letzter Prototyp der 
+		bei einer mehrstufigen Suche durchsucht wird)
+		</p>
+	</div>
+	
+	<h2>Zoo Beispiel</h2>
+	<div>
+		<p>
+		Konvertieren Sie das  <a href="Vorlage/Zoo.html">Zoo Beispiel</a> aus Woche 10 nach ES6
+		</p>
+	</div>
+	<div class="solution">
+		<p>
+			Keine Musterlösung vorhanden.
+		</p>
+	</div>
+</body>
+</html>

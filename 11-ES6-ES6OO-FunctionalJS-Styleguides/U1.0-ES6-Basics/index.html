@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>ES6 Basics</title>
+
+    <link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+    <link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+    <script src="../HSR.Template.Exercises/solutions.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		ES6 Basics
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+	<h2>ES6 Literale 1</h2>
+	<p>
+	Was ist Resultat der Evaluation des folgenden Codes. Erklären Sie wie das Resultat 
+	zustande kommt. Warum ist die Schreibweise verwirrend?
+	</p>
+    <pre class="prettyprint lang-js"><code><!--
+-->function fn1(name, age) {
+  return {
+    name,
+    [age]: age,
+  };
+}</code></pre>
+    <div class="solution"><p>
+    Ein Objekt { '13': 13, name: 'peter' }. Es wird die Kurzschreibweise und die 
+    Schreibweise für berechneten Eigenschaften für Properties genutzt. Die Schreibweise 
+    (Einrückung) ist verwirrend weil die {-Klammer wie der Start 
+    eines Blocks aussieht.
+    </p></div>
+
+	<h2>ES6 Literale 2</h2>
+	<p>
+	Der folgende Code ist gegeben. Was ist der Output? Erklären Sie das Resultat. 
+	Was macht newParagraph? Welche Properties hat der Wert der Variablen p?
+	Welche Methoden hat der Wert der Variablen p? Was ist der Effekt von 
+	p.paragraph = 'other text'; 
+	</p>
+
+    <pre class="prettyprint lang-js"><code><!--
+-->function newParagraph(initText) {
+  let myParagraph = initText;
+  return {
+    get paragraph() {
+      return myParagraph;
+    },
+    appendText(addText) {
+      myParagraph += addText;
+    },
+  };
+}
+
+const p = newParagraph('lorem ');
+p.appendText('impsum');
+console.log(p.paragraph);
+p.paragraph = 'other text';
+console.log(p.paragraph);</code></pre>
+	
+    <div class="solution">   <p>
+    newParagraph ist eine Factory die ein neues Objekt erstellt. newParagraph nutzt den
+    neuen ES6 Literal-Syntax um das neue Objekt zu definieren. p ist das Resultat eines 
+    Aufrufs von newParagraph('lorem ') und damit ein Objekt mit einem computed Property 
+    get paragraph. Diese Methode greift auf die Closure-Variable 'myParagraph' zu. 
+    Zudem hat das generierte Objekt eine Methode appendText welche den übergebenen Text 
+    an die Closure-Variable 'myParagraph' anhängt. Da kein Accessor set paragraph 
+    definiert ist, kann die Eigenschaft paragraph nicht gesetzt werden. Es ist zu beachten, 
+    dass das Setzen von paragraph einen Silent-Fail bewirkt: Es wird keine Fehlermeldung 
+    ausgegeben. Zum Glück wird in WebStorm mit ESLint der fehlerhafte Zugriff markiert.  
+    </p></div>
+
+
+	<h2>Function Parameters & Template Strings</h2>
+	<p>
+	In der Vorlesung ist die  Funktion paddedText() vorgestellt worden.
+	</p>
+
+    <pre class="prettyprint lang-js"><code><!--
+-->function paddedText(text = '', padding = '***') {
+    return padding + ' ' + text + ' ' + padding;
+}
+</code></pre>
+	<p>
+	Definieren Sie die Funktion so, dass beide Parameter als "Named Arguments" 
+	in Funktionsaufrufen genutzt werden können (z.B. paddedText({ padding: '###' })) 
+	und für beide Parameter Default-Werte definiert sind. Es soll auch möglich sein
+	paddedText mit einer leeren Parameterlist aufzurufen.
+	Zudem soll der Return-String als Template-String zusammengesetzt werden.	
+	</p>
+
+    <div class="solution">
+    <pre class="prettyprint lang-js"><code><!--
+-->function paddedText({text = '', padding = '***' } = {}) {
+    return `${padding} ${text} ${padding}`;
+}</code></pre>
+	</div>
+
+	<h2>Function Parameters 2</h2>
+
+	<p>
+	Erklären Sie den Output des folgenden Codes.
+	</p>
+
+    <pre class="prettyprint lang-js"><code><!--
+-->function carFactory({ brand, year } = { brand: 'Volkswagen', year: 1999 }) {
+  return {
+    brand,
+    year,
+  };
+}
+console.log(carFactory({ year: 2003 }));
+//-> { brand: undefined, year: 2003 }</code></pre>
+	<p>
+	Im Gegensatz dazu:.
+	</p>
+    <pre class="prettyprint lang-js"><code><!--
+-->function carFactory({ brand = 'Volkswagen', year = 1999 } = {}) {
+	return {
+		brand,
+		year, 
+	};
+}
+console.log(carFactory({ year: 2003 })); 
+//-> { brand: 'Volkswagen', year: 2003 }</code></pre>
+
+    <div class="solution">   <p>
+    Im erste Fall wird der Default { brand: 'Volkswagen', year: 1999 } nur dann genutzt
+    wenn eine leere Parameterliste übergeben wird. Also carFactory() -> 
+    { brand = 'Volkswagen', year = 1999 }
+   </p></div>
+
+	<h2>Scoping</h2>
+	<p>
+	Gegeben ist der folgende Code. Was ist der Output -- oder gibt es einen Runtime-Fehler?
+	</p>
+    <pre class="prettyprint lang-js"><code><!--
+-->function letScopeTest() {
+   const x = 99;
+   if (true) {
+      let x = 7;
+      x = 9;
+      console.log('x=', x);
+   }
+   console.log('x=', x);
+}
+letScopeTest();</code></pre>
+    <div class="solution">
+    Ouput ist 
+    <pre class="prettyprint lang-js"><code><!--
+-->x= 9
+x= 99</code></pre>
+    Nebenbemerkung: Das Shadowing im if (inner-block-scope) kann einfach zu Verwirrungen 
+    führen. Daher ist es in einigen StyleGuides (z.B. AirBnB) verboten.
+    </div>
+    <p>
+    Gibt es im obigen Beispiel Zeilen die eine "TDZ (Temporal Dead Zone darstellen? 
+    Begründen Sie Ihre Aussage
+    </p>
+    <div class="solution">
+        <p>
+	        Es gibt keine TDZ, da alle Variablen direkt am Anfang ihres Blocks definiert sind.
+        </p>
+	</div>
+</body>
+</html>

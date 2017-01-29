@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>Functional JS</title>
+
+	<link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+	<link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+	<script src="../HSR.Template.Exercises/solutions.js"></script>
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		Functional JS
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+ 	<h2>Functional JS</h2>
+	<p>
+	In der Vorlesung haben wir das folgende Problem und den ensprechenden Code einer funktionalen Lösung angeschaut. 
+	</p>
+	<p>
+	Problem: Convert a string to a new string where each character in the new string is '(' 
+	if that character appears only once in the original string, or ')' if that character 
+	appears more than once in the original string. Ignore capitalization when determining if 
+	a character is a duplicate (from https://www.codewars.com/kata/duplicate-encoder/
+	javascript )	
+	</p>
+	<pre class="prettyprint lang-js"><code><!--
+-->Examples:
+"din" => "((("
+"recede" => "()()()"
+"Success" => ")())())"
+"(( @" => "))(("
+</code></pre>
+	<p>
+	Lösung mittels funktionaler Programmierung
+	</p>
+	<pre class="prettyprint lang-js"><code><!--
+-->function duplicateEncode(word){
+  return word
+    .toLowerCase()
+    .split('')
+    .map( function (a, i, w) {
+      return w.indexOf(a) == w.lastIndexOf(a) ? '(' : ')'
+    })
+    .join('');
+}
+</code></pre>
+	<p>
+	Aufgabe 1: Vollziehen Sie die Lösung nach. Gehen Sie so vor, dass Sie Schritt für Schritt zuerst .join(...), dann .map(...), und dann split(...) entfernen und dokumentieren wie sich der Output ändert
+	</p>
+	<div class="solution">
+	<p>
+	Join fügt die Elemente des Arrays aus den vorherigen Berechnungen als String 
+	zusammen. Map wandelt jeden Buchstaben im Array in entweder '(' oder ')' um.
+	split macht aus dem String einen Array der nachher mit den iterator Funktionen 
+	weiter bearbeitet werden kann.
+	</p></div>
+	<p>
+	Aufgabe 2: Der folgende Code enthält eine alternative Lösung. Was genau macht reduce in der countCharacters Funktion?
+	</p>
+
+<pre class="prettyprint lang-js"><code><!--
+-->function countCharacters(chars) {
+  return chars
+    .reduce( function(memo, char){
+      memo[char] = memo[char] ? memo[char] + 1 : 1;
+      return memo;
+    }, {});
+}
+
+function duplicateEncode(word){
+  const chars = word.split('').map(ch => ch.toLowerCase());
+  const charsCount = countCharacters(chars);
+  return chars
+    .map( ch => charsCount[ch] > 1 ? ')' : '(' )
+    .join('');
+}
+	</code></pre>
+	<div class="solution">
+	<p>
+	Die Reduce Funktion läuft über den chars Array und sammelt in der memo Map die Häufigkeit mit der jeder Buchstabe erscheint. 
+	</p></div>
+	<p>
+	Aufgabe 3: Der folgende Code enthält eine nicht-funktionale Lösung. Nenne Sie einen 
+	Vorteil und  einen Nachteil.
+	</p>
+
+	<pre class="prettyprint lang-js"><code><!--
+-->function duplicateEncode(word){
+    word = word.toLowerCase();
+    var encoded = '';
+    
+    for(var i in word){
+      var letter = word[i].toLowerCase();
+      encoded += word.indexOf(letter) != word.lastIndexOf(letter) ? ')' : '(';
+    }
+    return encoded;
+}
+	</code></pre>
+	<div class="solution">
+	<p>
+	Vorteil funktionale Lösung: Es wird mehr mit Set/Mengen-Operationen gearbeitet. Für geübte Entwickler gut zu verstehen.
+	Nachteil: Für ungeübte Entwickler schwieriger zu verstehen.
+	</p></div>
+	<p>
+	Aufgabe 4: Schlagen Sie eine funktionale Lösung für das folgende Problem vor. 
+	Given a list lst and a number N, create a new list that contains each number of lst at 
+	most N times without reordering. For example if N = 2, and the input is 
+	[1,2,3,1,2,1,2,3], you take [1,2,3,1,2], drop the next [1,2] since this would lead to 1 
+	and 2 being in the result 3 times, and then take 3, which leads to [1,2,3,1,2,3]. 
+	(from https://www.codewars.com/kata/554ca54ffa7d91b236000023)
+	<pre>
+Examples:
+deleteNth ([1,1,1,1],2) // return [1,1]
+deleteNth ([20,37,20,21],1) // return [20,37,21]
+	</p>
+	<div class="solution">
+	<pre class="prettyprint lang-js"><code><!--
+-->function deleteNth(arr,x) {
+  counts = {};
+  return arr.filter(function (number) {
+    counts[number] = (counts[number] || 0) + 1;
+    return counts[number] <= x;
+  });
+}
+	</code></pre></div>
+
+
+
+</body>
+</html>
