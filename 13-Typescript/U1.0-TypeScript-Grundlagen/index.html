@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>TypeScript Grundlagen</title>
+
+    <link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+    <link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+    <script src="../HSR.Template.Exercises/solutions.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		TypeScript Grundlagen
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+  <p>
+  Mit Typescript kann ein erweitereter JavaScript Syntax genutzt werden. So ist es möglich Variablen, Funktionen, Klassen etc mit statischen Typeninformationen zu versehen. Typescript nutzt diese Informationen um eine statische Codeanalyse durchzuführen und Typenfehler zu identifizieren.
+  WebStorm integriert TypeScript auf eine Art die es erlaubt Typenfehler interaktiv gemeldet zu bekommen (Anzeige von Typenfehler durch rotes Unterstreichen). Zudem wird der Typescript Code stets automatisch neu kompiliert und im Projekt-Browser speziell verwaltet (Anzeige von JS Files versteckt hinter den TS Files)
+
+
+
+	<h2>Installation Typescript</h2>
+	<p>
+  Installieren und aktivieren Sie TypeScript in WebStorm. z.B. entsprechend <a href="https://www.jetbrains.com/help/webstorm/2016.3/transpiling-typescript-to-javascript.html">diesen Informationen</a>
+  
+	</p>
+  <p> 
+  Erstellen Sie nun ein neues Projekt und in diesem neuen Projekt ein neues TS File helloWorld.ts mit diesem Inhalt:
+  <pre class="prettyprint lang-js"><code><!--
+-->function printHello () {
+    let hws: string = "hello word";
+    console.log(hws);
+}
+printHello();
+  </code></pre>
+  </p>
+  <p>
+  Finden Sie nun das entsprechende JS File helloWorld.js . Wie unterscheiden sich helloWorld.ts und helloWorld.js ? Wie kann das Programm gestartet werden?
+  </p>
+  <p>
+  Typescript generiert mit der Standard-Einstellung ES3 Code. Wie erkennt man dies in Ihrem generierten JS-Code? Fügen Sie ein tsconfig.json File zu ihrem Projekt(-Folder) hinzu und ändern Sie die Zielsprache auf ES6. Was hat sich nun geändert?
+  </p>
+  <div class="solution">   
+  <p>
+  Zur Ausführung kann nur das .js gestartet werden. helloWorld.js ist normales JS. . Hier wird das let durch var ersetzt</p>
+  <pre class="prettyprint lang-js"><code><!--
+-->function printHello() {
+  var hws = "hello word";
+  console.log(hws);
+}<!--
+--></code></pre>
+  <p>
+  Mit File->New... -> tsconfig.json  erstellt man ein neues tsConfig File. Hier die Option target auf es6 umstellen.
+  Als Resultat wir nun let nicht mehr durch var ersetzt.
+  </p>
+  </div>
+
+
+	<h2>TypeScript Kompatibilität von Basistypen</h2>
+	<p>Der folgende TS Code ist gegeben. Bestimmen Sie welche der Statements im Abschnitt CHECK von TypeScript als problematisch klassifiziert werden.</p>
+  <p>
+  <pre class="prettyprint lang-js"><code><!--
+-->let a: any = true;
+let nb: number | boolean = false;
+let b: boolean = false;
+let n: number = 2;
+let nai= [3, 7, 9];
+let ni: 42;
+let t:[number, boolean] = [42, false];
+enum Decision {yes, no};
+let y:Decision = Decision.no;
+declare let m: number;
+
+// CHECK
+nb = 'aaa';     
+nb = nb || b;
+nb = nb || 0;
+b = b || nb;    
+n = a;
+n = nb;
+nai[5]=3;
+nai[6]=nb;      
+nai[7]=true;    
+t = [n, b];
+t = [nb, true]; 
+t = [b, b];    
+t = [b, a];    
+a = y;
+t = [n, y];     
+t = [n, a || y]; 
+nb = y;         
+n = y;          
+y = n;          
+m = nb;         
+n = m;
+m = b;
+<!--
+--></code></pre>
+  </p>
+ <div class="solution">   
+  <pre class="prettyprint lang-js"><code><!--
+-->// CHECK
+nb = 'aaa';     // error
+nb = nb || b;
+nb = nb || 0;
+b = b || nb;    // error
+n = a;
+n = nb;         // error    
+nai[5]=3;
+nai[6]=nb;      // error
+nai[7]=true;    // error
+t = [n, b];
+t = [nb, true]; // error
+t = [b, b];     // error
+t = [b, a];     // error
+a = y;
+t = [n, y];     // error
+t = [n, a || y]; // NOT AN ERROR -> attention
+nb = y;         // NOT AN ERROR -> attention
+n = y;          // NOT AN ERROR -> attention
+y = n;          // NOT AN ERROR -> attention
+m = nb;         // NOT AN ERROR -> attention
+n = m;
+m = b;          // error
+<!--
+--></code></pre>
+  </p>
+  </div>
+
+  <h2>Typisierte Parameter und Funktion mit TypeScript</h2>
+
+  <p>Der folgende TS Code ist gegeben. Bestimmen Sie welche der Statements im Abschnitt CHECK von TypeScript als problematisch unterstrichen werden. Was ist Output in der Konsole?</p>
+  <p>
+  <pre class="prettyprint lang-js"><code><!--
+-->
+let b: boolean = false;
+enum Decision {yes, no};
+let y:Decision = Decision.no;
+declare let m: number;
+
+// functions
+
+function prod2Function(n1: number, n2?: number) {
+    console.log('n1', n1, 'n2', n2);
+    if (n2 === undefined) {
+        return n1;
+    }else{
+        return n1*n2;
+    }
+}
+
+function prodFunction(...rest:number[]) {
+    console.log('rest', rest);
+    return rest.reduce( prod2Function, 1);
+}
+
+function numberApplicator (
+    numArray: number[],
+    numFun: (prevRes: number, current: number) => number) : number {
+
+    return numArray.reduce(numFun);
+}
+
+
+// CHECK
+
+console.log(prod2Function(2));
+console.log(prod2Function(2, 3));
+console.log(prod2Function(2, 3, 7));          
+
+console.log(prod2Function(b, 3));               
+console.log(prod2Function(y, 3));
+console.log(prod2Function(m, 3));            
+
+console.log(prodFunction(2, 3, 7));
+console.log(prodFunction(2, 3, b));            
+
+console.log('numberApplicator', numberApplicator([1, 2, 3, 4], prod2Function));<!--
+--></code></pre>
+  </p>
+ <div class="solution">   
+  <pre class="prettyprint lang-js"><code><!--
+-->// functions
+function prod2Function(n1: number, n2?: number) {
+    console.log('n1', n1, 'n2', n2);
+    if (n2 === undefined) {
+        return n1;
+    }else{
+        return n1*n2;
+    }
+}
+
+function prodFunction(...rest:number[]) {
+    console.log('rest', rest);
+    return rest.reduce( prod2Function, 1);
+}
+
+function numberApplicator (
+    numArray: number[],
+    numFun: (prevRes: number, current: number) => number) : number {
+
+    return numArray.reduce(numFun);
+}
+
+// CHECK
+
+console.log(prod2Function(2));
+console.log(prod2Function(2, 3));
+console.log(prod2Function(2, 3, 7));            // ERROR
+
+console.log(prod2Function(b, 3));               // ERROR
+console.log(prod2Function(y, 3));               // NO ERROR -> attention
+console.log(prod2Function(m, 3));               // NO ERROR -> attention
+
+console.log(prodFunction(2, 3, 7));
+console.log(prodFunction(2, 3, b));             // ERROR
+
+console.log('numberApplicator', numberApplicator([1, 2, 3, 4], prod2Function));
+
+// output:
+n1 2 n2 undefined
+2
+n1 2 n2 3
+6
+n1 2 n2 3
+6
+n1 2 n2 3
+6
+n1 aaa n2 3
+NaN
+n1 1 n2 3
+3
+n1 aaa n2 3
+NaN
+rest [ 2, 3, 7 ]
+n1 1 n2 2
+n1 2 n2 3
+n1 6 n2 7
+42
+rest [ 2, 3, 'aaa' ]
+n1 1 n2 2
+n1 2 n2 3
+n1 6 n2 aaa
+NaN
+n1 1 n2 2
+n1 2 n2 3
+n1 6 n2 4
+numberApplicator 24<!--
+--></code></pre>
+  </p>
+  </div>
+</body>
+</html>

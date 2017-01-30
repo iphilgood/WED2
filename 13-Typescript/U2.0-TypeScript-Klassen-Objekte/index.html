@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>Klassen und Objekte mit TypeScript</title>
+
+	<link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+	<link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+	<script src="../HSR.Template.Exercises/solutions.js"></script>
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		Klassen und Objekte mit TypeScript
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+	<h2>Klassen mit TS</h2>
+	<p>
+	Die folgende Klassendefinition im TypeScript Syntax ist gegeben. Analysieren Sie wie sich der von TypeScript generierte ES6 Code und ES3 Code (Umstellung in ts-config) vom TS-Code unterscheidet.
+	</p>
+
+	<div>
+		<pre class="prettyprint lang-js"><code><!--
+-->export default class Counter {
+
+    private _doors: number;
+    private _wood: string;
+    private _basePrice: number;
+
+    public static readonly WOOD_FACTORS = {'oak': 80, 'pine': 20, 'beech': 50, 'maple': 60, 'walnut': 90, 'cherry': 100};
+    public static readonly DOOR_FACTOR = 2;
+    public static readonly MIN_DOOR_COUNT = 2;
+    public static readonly MAX_DOOR_COUNT = 7;
+
+    constructor({doors = 2, wood = 'oak', basePrice = 40}: {doors?: number, wood?: string, basePrice?: number} = {}) {
+        this.doors = doors;
+        this.wood = wood;
+        this._basePrice = basePrice;
+    }
+
+    set wood(newWood: string) {
+        if (Counter.WOOD_FACTORS[newWood]) {
+            this._wood = newWood;
+        } else {
+            throw "Counters not avaiable with wood=" + newWood;
+        }
+    }
+
+    get wood() {
+        return this._wood;
+    }
+
+    set doors(newDoorCount: number) {
+        if (newDoorCount >= Counter.MIN_DOOR_COUNT && newDoorCount <= Counter.MAX_DOOR_COUNT) {
+            this._doors = newDoorCount;
+        } else {
+            throw `Counter can only have between ${Counter.MIN_DOOR_COUNT} and ${Counter.MAX_DOOR_COUNT} not supported ${newDoorCount}`;
+        }
+    }
+
+    get doors() {
+        return this._doors;
+    }
+
+    get price() {
+        let priceFactor = Counter.WOOD_FACTORS[this.wood] * Counter.DOOR_FACTOR * this.doors / 100;
+        return priceFactor * this._basePrice;
+    }
+}
+
+// Tests
+/*
+ c = new Counter();
+ console.log(c.price);
+ c.wood = 'pine';
+ console.log(c.price);
+ //c.doors = 8;
+ //c.doors = 1;
+ c.doors = 3;
+ console.log(c.price);
+ */<!--
+		--></code></pre>
+		</p>
+	</div>
+
+	<div class="solution">
+		<p>
+		ES6 Code. Unterschied: Properties nicht explizit deklariert. Die "static" Properties werden ausserhalb der Klassendefnition vorgenommen.
+		</p>
+			<pre class="prettyprint lang-js"><code><!--
+-->"use strict";
+class Counter {
+    constructor({ doors = 2, wood = 'oak', basePrice = 40 } = {}) {
+        this.doors = doors;
+        this.wood = wood;
+        this._basePrice = basePrice;
+    }
+    set wood(newWood) {
+        if (Counter.WOOD_FACTORS[newWood]) {
+            this._wood = newWood;
+        }
+        else {
+            throw "Counters not avaiable with wood=" + newWood;
+        }
+    }
+    get wood() {
+        return this._wood;
+    }
+    set doors(newDoorCount) {
+        if (newDoorCount >= Counter.MIN_DOOR_COUNT && newDoorCount <= Counter.MAX_DOOR_COUNT) {
+            this._doors = newDoorCount;
+        }
+        else {
+            throw `Counter can only have between ${Counter.MIN_DOOR_COUNT} and ${Counter.MAX_DOOR_COUNT} not supported ${newDoorCount}`;
+        }
+    }
+    get doors() {
+        return this._doors;
+    }
+    get price() {
+        let priceFactor = Counter.WOOD_FACTORS[this.wood] * Counter.DOOR_FACTOR * this.doors / 100;
+        return priceFactor * this._basePrice;
+    }
+}
+Counter.WOOD_FACTORS = { 'oak': 80, 'pine': 20, 'beech': 50, 'maple': 60, 'walnut': 90, 'cherry': 100 };
+Counter.DOOR_FACTOR = 2;
+Counter.MIN_DOOR_COUNT = 2;
+Counter.MAX_DOOR_COUNT = 7;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = Counter;
+// Tests
+/*
+ c = new Counter();
+ console.log(c.price);
+ c.wood = 'pine';
+ console.log(c.price);
+ //c.doors = 8;
+ //c.doors = 1;
+ c.doors = 3;
+ console.log(c.price);
+ */<!--
+		--></code></pre>
+		</p>
+		<p>
+		ES3 Code. Weitergehende Unterschiede: Klassen als Konstruktor-Funktionen definiert. Getter und Setter mit "define property"
+		</p>
+			<pre class="prettyprint lang-js"><code><!--
+-->"use strict";
+var Counter = (function () {
+    function Counter(_a) {
+        var _b = _a === void 0 ? {} : _a, _c = _b.doors, doors = _c === void 0 ? 2 : _c, _d = _b.wood, wood = _d === void 0 ? 'oak' : _d, _e = _b.basePrice, basePrice = _e === void 0 ? 40 : _e;
+        this.doors = doors;
+        this.wood = wood;
+        this._basePrice = basePrice;
+    }
+    Object.defineProperty(Counter.prototype, "wood", {
+        get: function () {
+            return this._wood;
+        },
+        set: function (newWood) {
+            if (Counter.WOOD_FACTORS[newWood]) {
+                this._wood = newWood;
+            }
+            else {
+                throw "Counters not avaiable with wood=" + newWood;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Counter.prototype, "doors", {
+        get: function () {
+            return this._doors;
+        },
+        set: function (newDoorCount) {
+            if (newDoorCount >= Counter.MIN_DOOR_COUNT && newDoorCount <= Counter.MAX_DOOR_COUNT) {
+                this._doors = newDoorCount;
+            }
+            else {
+                throw "Counter can only have between " + Counter.MIN_DOOR_COUNT + " and " + Counter.MAX_DOOR_COUNT + " not supported " + newDoorCount;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Counter.prototype, "price", {
+        get: function () {
+            var priceFactor = Counter.WOOD_FACTORS[this.wood] * Counter.DOOR_FACTOR * this.doors / 100;
+            return priceFactor * this._basePrice;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Counter.WOOD_FACTORS = { 'oak': 80, 'pine': 20, 'beech': 50, 'maple': 60, 'walnut': 90, 'cherry': 100 };
+    Counter.DOOR_FACTOR = 2;
+    Counter.MIN_DOOR_COUNT = 2;
+    Counter.MAX_DOOR_COUNT = 7;
+    return Counter;
+}());
+exports.__esModule = true;
+exports["default"] = Counter;
+// Tests
+/*
+ c = new Counter();
+ console.log(c.price);
+ c.wood = 'pine';
+ console.log(c.price);
+ //c.doors = 8;
+ //c.doors = 1;
+ c.doors = 3;
+ console.log(c.price);
+ */ <!--
+		--></code></pre>
+		</p>
+	</div>
+
+	<h2>Interfaces und "structural typing" mit TS</h2>
+
+	<p>
+	Das folgende Beispiel für die Nutzung von Interface ist gegeben. Geben Sie an bei welchen Statements im Abschnitt CHECK Typescript einen statischen Typenfehler findet. Warum müssen im Konstruktur von "DescribableItem" die Eigenschaften nicht initialisiert werden? Läuft der TS-Code effizienter aufgrund des "gesparten" TS-Codes im Konstruktor?
+	</p>
+	<pre class="prettyprint lang-js"><code><!--
+-->interface Point {
+    readonly x: number;
+    readonly y: number;
+}
+interface LikableItem {
+    likes?: number;
+}
+class DescribableItem {
+    constructor(public description: string){
+
+    }
+}
+class PointOfInterest extends DescribableItem implements Point, LikableItem  {
+    constructor(public x: number, public y: number, description: string, public likes?:number) {
+        super(description);
+    }
+}
+
+// CHECK
+let p:Point = new PointOfInterest(1, 2, 'home');
+p.description;
+let p2:PointOfInterest = &ltPointOfInterest&gtp;
+p2.description;
+let p3:Point = { x: 3, y: 4};
+let p4: any = p3;
+p4.description = 'hi';<!--
+  --></code></pre>
+
+	<div class="solution">
+		<p>
+		Konstruktoren müssen für Parameter die mit public oder private markiert sind nicht explizit das entsprechende Property initialisieren (Kurzschreibweise). Typescript generiert den entsprechenden Code im Hintegrund. Daher hat die Kurzschreibweise keine Auswirkung auf die Länge des von Laufzeitcodes. 
+		</p>
+		<pre class="prettyprint lang-js"><code><!--
+-->// CHECK
+let p:Point = new PointOfInterest(1, 2, 'home');
+p.description // error
+let p2:PointOfInterest = &ltPointOfInterest&gtp;
+p2.description
+let p3:Point = { x: 3, y: 4}; // duck-typing
+let p4: any = p3;
+p4.description = 'hi'; // any can set anything<!--
+--></code></pre></div>
+
+</body>
+</html>
