@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>Module im Browser</title>
+
+    <link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+    <link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+    <script src="../HSR.Template.Exercises/solutions.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		Module im Browser
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+  <p>
+  Grundlage für die folgenden Aufgaben ist der in der Vorlesung abgegebene Code im Projekt WED2-16-W12-Modules-Demos-SkripteServer
+  </p>
+	<h2>Motivation Module</h2>
+	<p>
+	Starten Sie aus WebStorm das folgende File im Browser ClientModules-1-Files/3-MVC-CounterCombined-separatedCode.html .
+  Vergleichen Sie die Funktion mit der Funktion in den anderen beiden HTML Files im gleichen Folder.</p>
+  <p> 
+  Beantworten Sie: Welche Fehlfunktion sehen Sie? Erklären Sie den Grund für diese Fehlfunktion. Tip: Geben Sie in der Console >>Counter<< (ohne Grösser- und Kleinerzeichen) ein.
+  </p>
+  <div class="solution">   
+  <p>
+  Fehlfunktion: Im Shoping-Basket wird der Preis nicht korrekt berechnet. Es wird NaN angezeigt. </p>
+  <p>
+  Der Grund ist, dass eine Counter Klasse im Kontext des Count-Games definiert wird. Zudem wird im Kontext des Shops eine andere Klasse mit dem gleichen Namen definiert. Diese zweite Definition wird nicht akzeptiert (Fehlermeldung in Konsole). Als Resultat erscheint in der Console bei der Evaluation von Counter nur die in game/Counter.js defnierte Klasse. Dies ist ein Problem, da die Funktionen in shop/main.je davon ausgehen, das mit new Counter(...) erstellte Objekte vom Typ shop/Counter.js sind -- und somit einen Preis berechnen können.
+  Die globale Counter Klasse kann natürlich auch aus der Console modifiziert werden. 
+  </p></div>
+
+  <p>Folgefrage: Evaluieren Sie in der Konsole den folgenden Code: >>Counter.prototype.countUp = function() {console.log(this)}<< . Was passiert wenn Sie danach den >>Count Up<< Button drücken? Erklären Sie das Verhalten.
+  </p> 
+  <div class="solution">   
+  <p>
+  Fehlfunktion: Beim Drücken des >>Count Up<< Buttons wird die game/Count-Instanz in der Konsole ausgegeben.  </p>
+  <p>
+  Der Grund ist, dass mit Counter.prototype.countUp auf die im Counter-Prototyp zentral gespeicherte countUp Methode zugegriffen werden kann. Dies Methode wird überschrieben, so dass neu nur noch console.log(this) aufgerufen wird.
+  </p></div>
+ 
+
+
+	<h2>Revealing Module Pattern</h2>
+	<p>Die Aufgabe bezieht sich auf Files im Folder ClientModules-2-RevealingModulePattern. Vergewissern Sie sich, dass 3-MVC-CounterCombined-separatedCode.html aktuell korrekt funktioniert. </p>
+  <p>Ersetzen Sie nun Zeile 61 im File shop/Counter.js mit dem folgenden Code window.shop = window.game || {};</p>
+  <p>Laden Sie die Seite neu. Welches Problem sehen Sie? Erklären Sie wie Ihre Veränderung zum Problem geführt hat</p> 
+  <p>Machen Sie Ihre Änderung rückgängig. Was ist die Funktion der Zeile window.shop = window.shop || {}; ?</p> 
+
+ <div class="solution">   
+  <p>
+  Fehlfunktion: Der Game Count wird immer >>undefined<< dargestellt.</p>
+  <p>
+  Der Grund ist, dass durch die Veränderung die vorher korrekt zu game.Counter zugewiesene Klasse in game/Counter.js mit der Klasse aus shop/Counter.js überschrieben wird. Hierdurch wird bei der Instanzierung von game.Counter (file game/main.js Zeile 3) eine Instanz von der falschen Klasse erstellt. Diese Instanz kann nicht korrekt auf countUp und countDown reagieren und hat auch keine Eigenschaft count. Daher dann die Darstellung von >>undefined<<.
+  </p>
+  <p>
+  Die Funktion der Zeile window.shop = window.shop || {}; ist, dass das globale Objekt shop (für das Paket shop) mit einem leeren Objekt (new Object())initialisiert wird wenn es noch nicht vorhanden ist. Diese Paket-Objekt kann dann alle Export-Objekte der Module des Pakets aufnehmen. 
+  </p></div>
+
+  <h2>Revealing Module Pattern 2</h2>
+  <p>Was passiert wenn in den Files game/Counter.js und shop/Counter.js die Klassendefnition nicht in einer IIFE ausgeführt werden?</p>
+  <div class="solution">   
+  <p>
+  In diesem Fall sind wir wieder bei der Ausgangssituation im Folder ClientModules-1-Files. Die beiden Klassendefinitionen führen zu einem Konflikt im Global-Namespace. Da eine doppelte Definition von Counter nicht erlaubt ist, wird nur die Klasse Counter in game/Counter.js erfolgreich definiert. Dies führt zu Problemen bei der Preisberechnung im Warenkorb, da die Objekte vom Typ game.Counter sind und nicht (wie notwendig) vom Typ shop.Counter .
+  </p></div>
+ 
+  
+  <h2>RequireJS</h2>
+  <p>Die folgenden Aufgaben beziehen sich auf Files im Folder ClientModules-3-RequireJS</p>
+  <p>Vergewissern Sie sich, dass 1-MVC-CounterGame-requireJS.html korrekt funktioniert. Beschreiben Sie: Was passiert wenn Sie nun in 1-MVC-CounterGame-requireJS.html >>data-main="scripts/mainGame"<< ersetzen mit  >>data-main="scripts/game/main"<< </p>
+  <p>Was für einen Fehler beobachten Sie? Wodurch entsteht das Problem?</p>
+  <div class="solution">   
+  <p>
+  In der Konsole wird gemeldet >>Failed to load resource: the server responded with a status of 404 (Not Found)<<. 
+  </p>
+  <p>Zuerst wird das File game/main.js korrekt gefunden. Das Problem entsteht  wenn die Zeile 2 >>require(['./game/Counter'], function (Counter) ...<< im File game/main.js ausgeführt wird. Da scripts/game/main das "root"-File der RequireJS Ladevorgänge ist, wird scripts/game als Ausgangspunkt aller Module-Pfade in require([...], ...) und define([...], ...) Statements angenommen. Daher wird nun der Modul-Pfad './game/Counter' als  scripts/game/game/Counter interpretiert. An diesem Ort ist aber kein Modul-Code abgelegt.
+  </p>
+  <p>MERKPUNKT: Für einen Baum von Modulen in Foldern (Paketen) kann (ohne die Nutzung eines Konfigurationsfiles) nicht mit main.js Modulen in unterschiedlichen Folders gearbeitet werden. Ansonsten ergeben sich Probleme in der Namesgebung (und damit beim Laden) von Modulen.  
+  </p>
+  <p>SEITENBEMERKUNG: RequireJS bietet die Möglichkeit den Ort und die Art des Ladens in einem Config File detailliert zu spezifizieren. Hiermit lassen sich die oben-genannten Probleme beheben. Mithilfe des Config Files ist es auch möglich Module (Files) zu laden die nicht den define-Syntax zur Modul-Definition nutzen. Mehr Details heirzu hier http://requirejs.org/docs/api.html#config-shim
+  </p></div>  
+
+  <h2>RequireJS 2</h2>
+  <p>Ersetzten Sie nun in game/main.js die Zeile >>  require(['./game/Counter'], function (Counter) { << mit >>   define(['./game/Counter'], function (Counter) { <<. Ist die Nutzung von define grundsätzlich erlaubt? Welches Problem beobachten Sie beim Re-load der Seite? Wie lässt sich das Problem beheben?
+  </p>
+  <div class="solution">   
+  <p>
+  Die Nutzung von define ist hier grundsätzlich erlaubt. Da main.js kein Export-Objekt zur Verfügung stellt kann aber genausogut require statt define genutzt werden.
+  Das Problem bei der Nutzung von define ist: In der Konsole wird gemeldet >>Uncaught Error: Script error for "game/game/Counter"<<. Der Grund ist, dass Module-Paths in define-Aufrufen relativ zur aktuellen File-Location definiert werden müssen. Daher löst die folgende Zeile das Problem:   >>define(['./Counter'], function (Counter) { << . In diesem Fall ist kein return Wert der Define-Funktion definiert. Dies ist kein Problem.
+  </p></div>
+ 
+  <h2>RequireJS 3</h2>
+  <p>Starten Sie 1-MVC-CounterGame-requireJS.html . Evaluieren Sie nun in der Konsole >> require(['./game/Counter'], function (Counter) {Counter.prototype.countUp = function() {console.log(this)}}) << Erklären Sie warum bei der Betätigung des Up Buttons nichts sichtbares mehr im UI passiert.
+  </p>
+  <div class="solution">   
+  <p>
+  Über >>require(['./game/Counter'], function (Counter) ... << sind wir in der Lage auf die Counter-Klasse und damit auf den Prototyp und die angehängten Methoden zuzugreifen und diese zu ersetzen. Die neue countUp Methode druckt nur in die Konsole.
+  </p></div>
+ 
+
+
+
+  <h2>RequireJS 4</h2>
+  <p>Definieren Sie ein neues Modul scripts/config.js. Dieses Modul nutzt define und gibt als Export-Objekt { step: 3, wood: 'maple' } zurück. Dieses Modul soll in game/main.js und shop/main.js gelesen werden (required Module) und als Default-Objekt bei den Aufrufen von >>new Counter(...)<< mitgegeben werden.
+  </p>
+
+  <div class="solution">   
+  <p>
+<pre class="prettyprint lang-js"><code><!--
+-->File scripts/config.js
+define (function () {
+  return { step: 3, wood: 'maple' }
+});
+
+File game/main.js
+function initPage () {
+  // show use of define
+  define(['./Counter', '../config'], function (Counter, config) {
+    const counter = new Counter(config);
+    ...
+  )
+}
+File shop/main.js
+function initPage () {
+  // show use of require
+  require(['./shop/Counter', './config'], function (Counter, config) {
+
+  ...
+
+   // controller / EventListener
+    btnBuy.addEventListener("click", function () {
+      basket.push(new Counter(config));
+      updateView()
+    });
+
+  ...
+
+}
+</code></pre></p></div>
+
+  <h2>ES6 Module Syntax + WebPack + Babel</h2>
+  <p>Analysieren Sie das durch WebPack (und Babel) generierte File >>ClientModules-4-ES5-WebPack/deploy/bundle.js <<
+  </p>
+  <p>
+  Fragen: Was ist der (grobe) Inhalt des Files? Wo wird dieses File genutzt? Was ist der Vorteil eines solchen generierten Files? Was ist der Nachteil?
+  </p>
+  <div class="solution">   
+  <p>
+  Das build-File enthält einen Initialisierungs-Bereich und alle JS-Files (inklusive Libraries) des Projekts. Das File wird als einziges File in der HTML Seite geladen. Vorteil: Beim Laden im Browser ist die Verarbeitung eines Files meist effizienter als das Laden vieler kleiner Files. Nachteil: Kein "Lazy-Loading". 
+  </p></div>
+</body>
+</html>

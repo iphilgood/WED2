@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MVC Counter with OO-Model and requireJS</title>
+    <script data-main="scripts/mainGame" src="scripts/require.js"></script>
+</head>
+<body>
+<h1>MVC Counter with OO-Model and requireJS</h1>
+
+<p>Count: <span id="countDisplay"></span></p>
+<button id="btnUp">Count Up</button>
+<button id="btnDown">Count Down</button>
+
+<pre>
+    here
+    Counter.prototype.countUp = function() {console.log(this)}
+    -> Counter is not accessible -> no "global namespace pollution"
+    BUT
+    require(['./game/Counter'], function (Counter) {Counter.prototype.countUp = function() {console.log(this)}})
+    Counter is accessible through the require function (keeps a map of Module exports)
+</pre>
+
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MVC Counter -- Shop Demo -- RequireJS</title>
+    <script data-main="scripts/mainShop" src="scripts/require.js"></script>
+</head>
+<body>
+<h1>MVC Counter -- Shop Demo -- RequireJS</h1>
+
+
+<h2>Shop</h2>
+<h3>Buy a Counter (2 Doors, Wood: Oak)</h3>
+<img src="scripts/shop/counter.jpg" width="150">
+<p>
+<button id="btnBuy">Buy Counter</button>
+</p>
+
+<h3>Shopping Basekt</h3>
+Number of Items <div id="basketCountDisplay"></div>
+Total Price <div id="basketTotalDisplay"></div>
+
+
+<pre>
+    here
+    Counter.prototype.countUp = function() {console.log(this)}
+    -> Counter is not accessible -> no "global namespace pollution"
+    BUT
+    require(['./shop/Counter'], function (Counter) {console.log(this)})
+    Counter is accessible, but has no relevant methods to hook into
+</pre>
+
+</body>
+</html>

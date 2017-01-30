@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8" />
+	<title>JS Module auf dem NodeJS Server</title>
+
+	<link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+	<link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+	<script src="../HSR.Template.Exercises/solutions.js"></script>
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+</head>
+<body>
+	<h1>
+		<a class="backlink" href="../index.html">⇦</a>
+		JS Module auf dem NodeJS Server -- CommonJS
+		<button id="showSolutions">Lösungen anzeigen/ausblenden</button>
+	</h1>
+
+	<h2>Erweitern von indexWithModules</h2>
+	<p>
+	Diese Übung bezieht sich auf die Files in WED2-16-W12-Modules-Demos-SkripteServer/ServerModules	
+	</p>
+	<p>
+	Stellen Sie zuerst sicher, dass Sie indexWithModules.js mit Node starten können (z.B. direkt in WebStorm oder in der Konsole). Hierzu ist wahrscheinlich npm install notwendig.
+	Erweitern Sie nun die Funktion newCounterJSON in CounterJsonAPI.js so, dass ein Config-Objekt z.B. { count: 7, step: 3 } (oder auch nur { step: 5 }) übergeben werden kann.
+	Schreiben Sie nun ein neues Modul config.js welches ein Config-Objekt { count: 7, step: 3 } als Export-Objekt (Nutzung von Module.exports) für die Initialisierung des Counters zur Verfügung stellt.
+	Binden Sie dieses Modul im File indexWithModules.js so ein, dass das aus dem Modul mit require erhaltene Config-Objekt zur Initialisierung des Counters genutzt wird.
+	</p>
+
+	<div class="solution">
+			<pre class="prettyprint lang-js"><code><!--
+-->// File CounterJsonAPI changed lines 1-3
+function newCounterJSON ({ count = 0, step = 1 } = {}) {
+  return { count, step };
+} 
+
+// File config.js, new content
+module.exports = { count: 7, step: 3 };
+
+// File indexWithModules.js changed line 20
+const config = require('./config');
+
+// File indexWithModules.js changed line 36
+  request.session.counterJSON = request.session.counterJSON || CounterJsonAPI.newCounterJSON(config);<!--
+		--></code></pre>
+		</p>
+	</div>
+	
+</body>
+</html>

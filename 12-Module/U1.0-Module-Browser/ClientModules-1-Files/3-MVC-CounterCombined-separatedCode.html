@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MVC Counter -- Problem of Double Counter</title>
+    <script src="scripts/game/Counter.js"></script>
+    <script src="scripts/game/main.js"></script>
+    <script src="scripts/shop/Counter.js"></script>
+    <script src="scripts/shop/main.js"></script>
+
+</head>
+<body>
+<h1>MVC Counter -- Problem of Double Counter</h1>
+
+<h2>Count Game</h2>
+<p>Count: <span id="countDisplay"></span></p>
+<button id="btnUp">Count Up</button>
+<button id="btnDown">Count Down</button>
+
+<h2>Shop</h2>
+<h3>Buy a Counter (2 Doors, Wood: Oak)</h3>
+<img src="scripts/shop/counter.jpg" width="150">
+<p>
+    <button id="btnBuy">Buy Counter</button>
+</p>
+
+<h3>Shopping Basekt</h3>
+Number of Items <div id="basketCountDisplay"></div>
+Total Price <div id="basketTotalDisplay"></div>
+
+<h2>Remark</h2>
+
+<pre>
+    here
+    Counter.prototype.countUp = function() {console.log(this)}
+    "works"
+</pre>
+
+</body>
+</html>

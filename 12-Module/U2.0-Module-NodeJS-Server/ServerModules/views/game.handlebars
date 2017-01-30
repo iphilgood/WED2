@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>{{title}}</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>
+			{{title}}
+			<a href="/">&#x21bb;&nbsp;Reload</a>
+		</h1>
+        <h2>Counter Game</h2>
+        <p>Count: <strong>{{count}}</strong>.</p>
+        <form method='post' action='/up'>
+            <button type="submit">Count Up</button>
+        </form>
+        <form method='post' action='/down'>
+            <button type="submit">Count Down</button>
+        </form>
+	</body>
+</html>

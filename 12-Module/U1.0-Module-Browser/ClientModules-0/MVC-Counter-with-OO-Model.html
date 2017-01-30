@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MVC Counter with OO-Model</title>
+    <script>
+      window.onload = function () {
+
+        // model
+
+        class Counter {
+          constructor( { start = 0, step = 1 } ={} ) {
+            this.count = start;
+            this.step = step;
+          }
+          countUp () {
+            this.count += this.step;
+          }
+          countDown () {
+            this.count -= this.step;
+          }
+        }
+
+        const counter = new Counter();
+
+        // view-refs
+        const countDisplay = document.getElementById("countDisplay");
+        const btnUp = document.getElementById("btnUp");
+        const btnDown = document.getElementById("btnDown");
+
+        // viewUpdate
+        function updateView() {
+          countDisplay.innerHTML = counter.count;
+        }
+
+        // controller / EventListener
+        btnUp.addEventListener("click", function () {
+          counter.countUp();
+          updateView()
+        });
+        btnDown.addEventListener("click", function () {
+          counter.countDown();
+          updateView()
+        });
+
+        // init
+        updateView();
+      }
+
+    </script>
+</head>
+<body>
+<h1>MVC Counter with OO-Model</h1>
+
+<p>Count: <span id="countDisplay"></span></p>
+<button id="btnUp">Count Up</button>
+<button id="btnDown">Count Down</button>
+
+</body>
+</html>
