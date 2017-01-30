@@ -1,0 +1,31 @@
+ul, ol {
+	padding-left: inherit;
+}
+ul {
+	list-style-type: disc;
+}
+ol.decimal {
+	list-style: decimal;
+}
+ol ol {
+	list-style-type: lower-roman;
+}
+
+blockquote {
+	background: gainsboro;
+	border: none;
+	font-style: italic;
+	margin: 0;
+	font-size: 1.25em;
+}
+blockquote::before {
+	content: "«";
+}
+blockquote::after {
+	content: "»";
+}
+.solution pre.prettyprint, .solution pre {
+	margin: 0.5rem;
+	background: white;
+	border-color: RGB(220, 220, 220);
+}

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>WED2 - Testing: Test doubles exercise - How to decouple SUT-components?</title>
+		<link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+		<link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+		<link rel="stylesheet" type="text/css" href="../style.css" />
+
+		<script src="../HSR.Template.Exercises/solutions.js"></script>
+		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	</head>
+	<body>
+		<h1>
+			<a class="backlink" href="../index.html">⇦</a>
+			WED2 - Testing: Test doubles exercise
+			<button id="showSolutions">Show/hide solutions</button>
+		</h1>
+		<blockquote>How to decouple SUT-components?</blockquote>
+
+		<h2>Transaction user stories</h2>
+		<ul>
+			<li>
+				<strong>As a</strong> <em>bank customer</em>
+				<strong>I want to</strong> <em>send amounts</em> to other accounts
+				<strong>so that</strong> I can <em>pay someone</em>.
+			</li>
+			<li>
+				<strong>As a</strong> <em>bank customer</em>
+				<strong>I want to</strong> <em>receive amounts</em> from other accounts
+				<strong>so that</strong> someone can <em>pay me</em>.
+			</li>
+			<li>
+				<strong>As a</strong> <em>bank</em>
+				<strong>I want to</strong> <em>see time and date of every transaction</em>
+				<strong>so that</strong> I have an <em>overview about the transaction history</em>.
+			</li>
+		</ul>
+
+
+		<h2>Transaction test scenarios (BDD)</h2>
+
+		<h3>Scenario <em>new transaction</em></h3>
+		<p><strong>Given</strong> a <em>new transaction</em> about 25 of Account A (balance 100) to Account B (balance 25) …</p>
+		<ul>
+			<li>… <strong>then</strong> the transaction date should be <em>now</em></li>
+			<li>… <strong>then</strong> the transaction amount should be 25</li>
+			<li>… <strong>then</strong> the transaction should not be completed yet</li>
+		</ul>
+
+		<h3>Scenario <em>transaction execution</em></h3>
+		<p><strong>Given</strong> a <em>new transaction</em> about 25 of Account A (balance 100) to Account B (balance 25) …</p>
+		<ul>
+			<li>… <strong>and</strong> the transaction is executed …
+				<ul>
+					<li>… <strong>then</strong> Account A should be withdrawed 25.</li>
+					<li>… <strong>then</strong> Account B should be deposited 25.</li>
+					<li>… <strong>then</strong> the transaction should be completed.</li>
+				</ul>
+			</li>
+		</ul>
+
+
+		<h2>Test doubles exercise</h2>
+		<p>Unit tests should never test multiple components. So we have to use a stub/fake/mock/spy.</p>
+		<ol class="decimal">
+			<li>Write the tests of the first scenario. Use <a href="./1-initial/transaction.spec.js" target="_blank">1-initial/transaction.spec.js</a> as base for your work (2, 3, 4 &amp; 5 contain the solutions of the next steps).
+				<ul>
+					<li>To compare objects use <code>toEqual()</code>. <code>toBe()</code> compares the reference.</li>
+					<li>To test the transaction date see the combination of <code>spyOn(Date, 'now')</code> and <code>andReturn()</code> or <code>andCallFake()</code> &rarr; <a href="http://evanhahn.com/how-do-i-jasmine/" target="_blank">evanhahn.com/how-do-i-jasmine/</a></li>
+				</ul>
+				<div class="solution">
+					<a href="./2-spec/transaction.spec.js">2-spec/transaction.spec.js</a>
+
+					<pre class="prettyprint"><code class="language-javascript"><!--
+-->var Transaction = require("./transaction");
+
+describe("A new transaction", function() {
+	beforeEach(function() {
+		// Methodstub for Date.now()
+		spyOn(Date, 'now').andReturn(new Date("2016-11-22T09:49:51.010Z"));
+
+		this.accountA = {};
+		this.accountB = {};
+		this.transaction = new Transaction(this.accountA, this.accountB, 25);
+	});
+
+	it("has transaction date 2016-11-22T09:49:51.010Z", function() {
+		expect(this.transaction.date).toEqual(new Date("2016-11-22T09:49:51.010Z"));
+	});
+
+	it("has an amount of 25", function() {
+		expect(this.transaction.amount).toBe(25);
+	});
+
+	it("is not yet completed", function() {
+		expect(this.transaction.completed).toBe(false);
+	});
+});<!--
+				--></code></pre>
+				</div>
+			</li>
+			<li>Run the tests. The tests must fail on execution because we didn't yet implement the transaction:
+				<pre class="prettyprint"><code class="language-bash"><!--
+--># ...2-Dependencies $
+
+# bash
+$(npm bin)/jasmine-node --verbose ./1-initial/*.spec.js
+
+# or (windows standard shell)
+..\node_modules\.bin\jasmine-node --verbose 1-initial\transaction.spec.js
+
+# or using npm script (bash)
+npm run jasmine-node --verbose ./1-initial/*.spec.js
+
+# or using npm script (windows standard shell)
+npm run jasmine-node --verbose ./1-initial/transaction.spec.js<!--
+				--></code></pre>
+				If your shell does not support whildcard expansion like <code>*.spec.js</code> use the full path <code>transaction.spec.js</code>.
+			</li>
+			<li>Implement now the initialization of the Transaction (setup) in <a href="./1-initial/transaction.js" target="_blank">1-initial/transaction.js</a>.
+
+				<div class="solution">
+					<a href="./3-implementation/transaction.js">3-implementation/transaction.js</a>
+
+					<pre class="prettyprint"><code class="language-javascript"><!--
+-->module.exports = class Transaction {
+	constructor(accountA, accountB, amount) {
+		this.date = Date.now();
+		this.amount = amount;
+		this.completed = false;
+	}
+};<!--
+				--></code></pre>
+				</div>
+			</li>
+			<li>The tests should pass now</li>
+			<li>Extend the tests: write the test of the second scenario
+				<ul>
+					<li>To test if <code>withdraw()</code> and <code>deposit()</code> have been called checkout <code>spyOn()</code>
+						&rarr; <a href="http://evanhahn.com/how-do-i-jasmine/" target="_blank">evanhahn.com/how-do-i-jasmine</a>.
+					</li>
+				</ul>
+
+				<div class="solution">
+					<a href="./4-spec-completion/transaction.spec.js">4-spec-completion/transaction.spec.js</a>
+
+					<pre class="prettyprint"><code class="language-javascript"><!--
+-->var Transaction = require(./transaction");
+
+describe("A new transaction", function() {
+	beforeEach(function() {
+		// Methodstub for Date.now()
+		spyOn(Date, 'now').andReturn(new Date("2016-11-22T09:49:51.010Z"));
+
+		// Bank account spy
+		var BankAccountSpy = class {
+			withdraw() {}
+			deposit() {}
+		};
+
+		this.accountA = new BankAccountSpy();
+		this.accountB = new BankAccountSpy();
+		this.transaction = new Transaction(this.accountA, this.accountB, 25);
+	});
+
+	it("has transaction date 2016-11-22T09:49:51.010Z", function() {
+		expect(this.transaction.date).toEqual(new Date("2016-11-22T09:49:51.010Z"));
+	});
+
+	it("has an amount of 25", function() {
+		expect(this.transaction.amount).toBe(25);
+	});
+
+	it("is not yet completed", function() {
+		expect(this.transaction.completed).toBe(false);
+	});
+
+
+	describe("executed", function() {
+		beforeEach(function() {
+			spyOn(this.accountA, 'withdraw');
+			spyOn(this.accountB, 'deposit');
+			this.transaction.execute();
+		});
+
+		it("withdraws 25 from account A", function() {
+			expect(this.accountA.withdraw).toHaveBeenCalledWith(25);
+		});
+
+		it("deposits 25 to account B", function() {
+			expect(this.accountB.deposit).toHaveBeenCalledWith(25);
+		});
+
+		it("is completed", function() {
+			expect(this.transaction.completed).toBe(true);
+		});
+	});
+});<!--
+				--></code></pre>
+				</div>
+			</li>
+			<li>The new tests must fail</li>
+			<li>Complete the transaction implementation (execution)
+
+				<div class="solution">
+					<a href="./5-solution/transaction.js">5-solution/transaction.js</a>
+
+					<pre class="prettyprint"><code class="language-javascript"><!--
+-->module.exports = class Transaction {
+	constructor(accountA, accountB, amount) {
+		this.accountA = accountA;
+		this.accountB = accountB;
+		this.date = Date.now();
+		this.amount = amount;
+		this.completed = false;
+	}
+
+	execute() {
+		this.accountA.withdraw(this.amount);
+		this.accountB.deposit(this.amount);
+		this.completed = true;
+	}
+};<!--
+				--></code></pre>
+				</div>
+			</li>
+			<li>The tests should all pass now</li>
+			<li>Why did we not implement all tests and features in one operation?
+
+				<div class="solution">
+					 <p>Because we develop iteratively. So we</p>
+					 <ol class="decimal">
+						<li>create the spec</li>
+						<li>check if tests are failing</li>
+						<li>3. implement the fature</li>
+						<li>check if the tests are passing</li>
+						<li>Do the whole iteration for the next SMALL feature</li>
+				 	</ol>
+					<p>So we can implement, test, version &amp; integrate iteratively
+					 	&rarr; reduces errors, improves quality, reults in a clean history.</p>
+				</div>
+			</li>
+		</ul>
+	</body>
+</html>

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>WED2 - Testing: TDD exercise - How to enhance software quality by process?</title>
+		<link rel="icon" href="../HSR.Template.Exercises/icon-document.png" type="image/png">
+
+		<link rel="stylesheet" type="text/css" href="../HSR.Template.Exercises/documentStyle.css" />
+		<link rel="stylesheet" type="text/css" href="../style.css" />
+
+		<script src="../HSR.Template.Exercises/solutions.js"></script>
+		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	</head>
+	<body>
+		<h1>
+			<a class="backlink" href="../index.html">⇦</a>
+			WED2 - Testing: TDD exercise
+			<button id="showSolutions">Show/hide solutions</button>
+		</h1>
+		<blockquote>How to enhance software quality by process?</blockquote>
+
+		<h2>Bank account user stories</h2>
+		<ul>
+			<li>
+				<strong>As a</strong> <em>bank agent</em>
+				<strong>I want to</strong> <em>create accounts</em>
+				<strong>so that</strong> customers <em>can deposit and withdraw amounts</em>.
+			</li>
+	 		<li>
+				<strong>As a</strong> <em>bank customer</em>
+				<strong>I want to</strong> <em>deposit amounts</em>
+				<strong>so that</strong> I can <em>store my money</em>.
+			</li>
+			<li>
+				<strong>As a</strong> <em>bank customer</em>
+				<strong>I want to</strong> <em>withdraw amounts</em>
+				<strong>so that</strong> I <em>get back my stored money</em>.
+			</li>
+			<li>
+				<strong>As a</strong> <em>bank</em>
+				<strong>I want to</strong> <em>prevent customers from overdrawing</em> their account
+				<strong>so that</strong> I can <em>lower my risk</em>.
+			</li>
+		</ul>
+
+
+		<h2>Bank account test scenarios (BDD)</h2>
+		<h3>Scenario <em>New account</em></h3>
+		<p><strong>Given</strong> a <em>new account</em> …</p>
+		<ul>
+			<li> … <strong>then</strong> the balance should be 0.</li>
+			<li> … <strong>When</strong> the Account balance is 0 …
+				<ul>
+					<li> … <strong>then</strong> withdraw should be impossible.</li>
+					<li> … <strong>and</strong> deposit of 50 is made …
+						<ul>
+							<li> … <strong>then</strong> the balance should be 50.</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+
+		<h3>Scenario <em>Account balance 50</em></h3>
+		<p><strong>Given</strong> an <em>account with balance 50</em> …</p>
+		<ul>
+			<li> … <strong>When</strong> withdrawed …
+				<ul>
+					<li> … <strong>then</strong> the maximal possible withdraw should be 50 * 25%.</li>
+				</ul>
+			</li>
+			<li> … <strong>When</strong> withdrawed 50 * 25% …
+				<ul>
+					<li> … <strong>then</strong> the balance should be 37.5.</li>
+				</ul>
+			</li>
+		</ul>
+
+
+ 		<h2>TDD Exercise</h2>
+		<p>Remember the bank account refactoring shown in the lecture. First you have to write tests to reproduce the failure and then you have to fix the issue.</p>
+		<ol class="decimal">
+			<li>Install the newest version of nodejs</li>
+			<li>Install the dependencies (in the exercise root directory):
+				 <pre class="prettyprint"><code class="language-shell"><!--
+-->cd "where-the-package.json-is"
+npm install<!--
+ 				--></code></pre>
+			 </li>
+			<li>Take a look at the following links to get familiar with Jasmine (Ignore the section about the installation and the <em>SpecRunner</em> in the tutorial. The SpecRunner is used to run Jasmine on the client but we run it on nodejs):
+				<ul>
+					<li><a href="http://evanhahn.com/how-do-i-jasmine/" target="_blank">evanhahn.com/how-do-i-jasmine/</a></li>
+					<li><a href="https://jasmine.github.io/edge/introduction.html" target="_blank">jasmine.github.io/edge/introduction.html</a></li>
+				</ul>
+			</li>
+			<li>In <a href="./1-initial" target="_blank">1-initial</a> and <a href="./2-refactoring" target="_blank">2-refactoring</a> you will find the code shown in the lecture (3 &amp; 4 contain the solution).
+			</li>
+			<li>Use <a href="./2-refactoring/bank-account.spec.js" target="_blank">2-refactoring/bank-account.spec.js</a> as base and write tests for <a href="./2-refactoring/bank-account.js" target="_blank">2-refactoring/bank-account.js</a>.
+				<div class="solution">
+					<a href="./3-spec/bank-account.spec.js" target="_blank">3-spec/bank-account.spec.js</a>
+
+					<pre class="prettyprint"><code class="language-javascript"><!--
+-->var BankAccount = require("./bank-account");
+
+// new bank account test suite
+describe("A new bank account", function() {
+	beforeEach(function() {
+		this.account = new BankAccount();
+	});
+
+	it("is initialized by a balance of 0", function() {
+		expect(this.account.balance).toBe(0);
+	});
+
+	it("should not allow a withdraw without balance", function() {
+		expect(this.account.withdraw(50)).toBeFalsy();
+		expect(this.account.balance).toBe(0);
+	});
+
+	it("should have a balance of 50 after a deposit of 50", function() {
+		expect(this.account.deposit(50)).toBeTruthy();
+		expect(this.account.balance).toBe(50);
+	});
+});
+
+// 50$ bank account test suite
+describe("A bank account of balance 50", function() {
+	beforeEach(function() {
+		this.account = new BankAccount();
+		this.account.balance = 50;
+	});
+
+	it("should not allow to withdraw 13 (26%)", function() {
+		expect(this.account.withdraw(13)).toBeFalsy();
+		expect(this.account.balance).toBe(50);
+	});
+
+	it("should allow to withdraw 12.5 (25%)", function() {
+		expect(this.account.withdraw(12.5)).toBeTruthy();
+		expect(this.account.balance).toBe(37.5);
+	});
+});<!--
+-					--></code></pre>
+				</div>
+
+				<br />To run Jasmine use a system terminal or the built in terminal of Webstorm:
+				<pre class="prettyprint"><code class="language-bash"><!--
+--># ...1-TDD $
+
+# (bash or similar shell)
+$(npm bin)/jasmine-node --verbose ./2-refactoring/*.spec.js
+
+# or (windows standard shell)
+..\node_modules\.bin\jasmine-node --verbose 2-refactoring\bank-account.spec.js
+
+# or (npm script &amp; bash)
+npm run jasmine --verbose ./2-refactoring/*.spec.js
+
+# or (npm script &amp; windows standard shell)
+npm run jasmine --verbose 2-refactoring\bank-account.spec.js<!--
+				--></code></pre>
+
+				<p><code>$(npm bin)/</code> allows you to install &amp; use jasmine locally.
+				The usage of global modules (<code>npm install -g xyz</code>) is not recommended.
+				Different projects may use different versions of a library/tool.</p>
+
+				<p>On windows use the power shell and use the substitution mechanism of the powershell instead of <code>$(npm bin)</code> and <code>*.spec.js</code> or use the full path <code>../node_modules/.bin/jasmine-node --verbose bank-account.spec.js</code>.</p>
+
+				<p>
+					To learn more about locally installed modules and how to use it see
+					<a href="https://github.com/wasabideveloper/HSR.CAS-FEE.Testing/blob/master/Local-npm-modules.md" target="_blank">
+						How to install &amp; use npm modules without a system wide installation?
+					</a>
+				</p>
+
+				<p>If you don't like <code>$(npm bin)/</code> create the entry <code>"jasmine": "jasmine-node"</code> in the section <em>scripts</em> of your <em>package.json</em> and run it using npm scripts: <code>npm run jasmine --verbose *.spec.js</code>.</p>
+			</li>
+			<li>The tests should not all pass (because we didn't fix the broken return yet)!</li>
+			<li>Fix the broken return statement
+				<div class="solution">
+					<a href="./4-solution/bank-account.js" target="_blank">4-solution/bank-account.js</a>
+
+					<pre class="prettyprint"><code class="language-javascript" ><!--
+-->'use strict';
+
+module.exports = class BankAccount {
+	constructor() {
+		this.maximalWithdrawFactor = 0.25;
+		this.balance = 0;
+	}
+
+	deposit(amount) {
+		this.balance += amount;
+		return true;
+	}
+
+	withdraw(amount) {
+		if(!this.hasTooLessCredit(amount)) {
+			this.balance -= amount;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	hasTooLessCredit(amount) {
+		return (
+			this.balance < Math.abs(amount) ||
+			amount > this.balance * this.maximalWithdrawFactor
+		);
+	}
+};<!--
+					--></code></pre>
+					<p>Why did it break? In JavaScript we have the empty statement and we have automatic semicolon insertion. The compiler will insert a semicolon after <code>return</code>, so the empty statement will be returned (undefined). Undefined will be casted to false.
+					</p>
+				</div>
+			</li>
+			<li>Now your tests should pass!</li>
+			<li>How is this development cycle called?
+				<div class="solution">
+					<h4>TDD - Test driven development</h4>
+					<ol class="decimal">
+						<li>Write spec</li>
+					 	<li>Run tests &rarr; tests fail</li>
+					 	<li>Implement feature &amp; run tests again until they pass</li>
+					</ol>
+				</div>
+			</li>
+		</ol>
+
+
+		<h3>Information about <code>process.env.bankaccount</code></h3>
+
+		In the solution you will find the following import construct. You can ignore it. It's only used for the exercise.
+
+		<pre class="prettyprint"><code class="language-shell"><!--
+-->var BankAccount = require(process.env.bankaccount || "./bank-account");<!--
+		--></code></pre>
+		<pre class="prettyprint"><code class="language-shell"><!--
+-->process.env.bankaccount = "../4-solution/bank-account";
+var Spec = require("../3-spec/bank-account.spec");<!--
+		--></code></pre>
+		It's used to keep the solution clean of duplicated code by importing the file declared in the process environment variable <code>process.env.bankaccount</code>.
+
+		In wild life you will work with normal imports like:
+
+		<pre class="prettyprint"><code class="language-shell"><!--
+-->var BankAccount = require("./bank-account");<!--
+		--></code></pre>
+		<pre class="prettyprint"><code class="language-shell"><!--
+-->var Spec = require("../3-spec/bank-account.spec");<!--
+		--></code></pre>
+	</body>
+</html>

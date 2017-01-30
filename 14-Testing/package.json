@@ -1,0 +1,23 @@
+{
+  "name": "hsr.wed2.testing",
+  "version": "0.1.0",
+  "description": "Lern how to test your application with jasmine",
+  "main": "index.js",
+  "scripts": {
+  	"jasmine": "jasmine-node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wasabideveloper/HSR.WED2.Testing.Exercises"
+  },
+  "author": "HSR Hochschule für Technik Rapperswil, T. Blaser",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/wasabideveloper/HSR.WED2.Testing.Exercises/issues"
+  },
+  "homepage": "https://github.com/wasabideveloper/HSR.WED2.Testing.Exercises#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "jasmine-node": "^1.14.5"
+  }
+}
